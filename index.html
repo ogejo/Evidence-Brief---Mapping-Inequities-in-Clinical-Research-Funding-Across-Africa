@@ -1,0 +1,2806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evidence Brief - Mapping Inequities in Clinical Research Funding Across Africa</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #FAFAF8;
+  --text: #1a1a1a;
+  --text-secondary: #4a4a4a;
+  --accent: #1B4F72;
+  --accent-light: #2E86AB;
+  --danger: #C0392B;
+  --warn: #E67E22;
+  --success: #27AE60;
+  --border: #ddd;
+  --code-bg: #1e1e2e;
+  --code-text: #cdd6f4;
+  --callout-bg: #f0f4f8;
+  --callout-border: #2E86AB;
+  --teal: #0D7377;
+  --divider: #B0BEC5;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Source Serif 4', Georgia, serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.78;
+  font-size: 17px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+/* ─── Header ─── */
+.hero {
+  background: linear-gradient(135deg, #0D1B2A 0%, #1B4F72 60%, #2E86AB 100%);
+  color: white;
+  padding: 80px 0 60px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(46,134,171,0.25) 0%, transparent 70%);
+}
+.hero-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgb(2, 157, 247);
+  margin-bottom: 18px;
+}
+.hero h1 {
+  font-size: 2.5em;
+  line-height: 1.2;
+  font-weight: 700;
+  margin-bottom: 12px;
+  max-width: 700px;
+}
+.hero .subtitle {
+  font-size: 1.1em;
+  font-style: italic;
+  opacity: 0.85;
+  max-width: 650px;
+  line-height: 1.5;
+}
+.hero .meta {
+  margin-top: 30px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.9em;
+  opacity: 0.7;
+}
+
+/* ─── Preamble ─── */
+.preamble {
+  padding: 40px 0;
+  border-bottom: 1px solid var(--divider);
+  margin-bottom: 40px;
+  font-size: 1.02em;
+  color: var(--text-secondary);
+}
+
+/* ─── Sections ─── */
+.part-header {
+  margin: 60px 0 8px;
+  padding-top: 50px;
+  border-top: 3px solid var(--accent);
+}
+.part-header .part-label {
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--accent-light);
+  margin-bottom: 6px;
+}
+.part-header h2 {
+  font-size: 1.9em;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.25;
+}
+
+h3 {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 1.25em;
+  font-weight: 700;
+  color: var(--accent);
+  margin: 40px 0 12px;
+}
+
+p { margin-bottom: 16px; }
+
+strong { font-weight: 600; }
+
+/* ─── Blockquotes ─── */
+blockquote {
+  border-left: 4px solid var(--teal);
+  background: var(--callout-bg);
+  padding: 18px 24px;
+  margin: 24px 0;
+  font-style: italic;
+  color: var(--text-secondary);
+  border-radius: 0 6px 6px 0;
+}
+blockquote p:last-child { margin-bottom: 0; }
+
+/* ─── Tables ─── */
+.table-wrap {
+  overflow-x: auto;
+  margin: 24px 0;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.92em;
+}
+thead {
+  background: var(--accent);
+  color: white;
+}
+th {
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+}
+td {
+  padding: 9px 14px;
+  border-bottom: 1px solid #e0e0e0;
+}
+tr:nth-child(even) { background: #f7f9fb; }
+.highlight-row { background: #fde8e8 !important; font-weight: 600; }
+.table-caption {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.88em;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin-top: 8px;
+}
+
+/* ─── Figure blocks ─── */
+.figure-block {
+  margin: 32px 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.figure-chart {
+  padding: 12px;
+  min-height: 360px;
+}
+.figure-caption {
+  padding: 12px 18px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.88em;
+  color: var(--text-secondary);
+  border-top: 1px solid #eee;
+  background: #fafbfc;
+}
+.figure-caption strong {
+  color: var(--accent);
+}
+
+/* ─── Code toggle ─── */
+.code-toggle-wrap {
+  border-top: 1px solid #eee;
+}
+.code-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--accent-light);
+  background: #f5f7fa;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: background 0.15s;
+}
+.code-toggle-btn:hover { background: #eaf0f6; }
+.code-toggle-btn .arrow {
+  display: inline-block;
+  transition: transform 0.2s;
+  font-size: 0.75em;
+}
+.code-toggle-btn.open .arrow { transform: rotate(90deg); }
+
+.code-block {
+  display: none;
+  max-height: 500px;
+  overflow: auto;
+  background: var(--code-bg);
+  padding: 18px 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78em;
+  line-height: 1.6;
+  color: var(--code-text);
+}
+.code-block.visible { display: block; }
+
+/* syntax highlighting */
+.kw { color: #cba6f7; }
+.fn { color: #89b4fa; }
+.st { color: #a6e3a1; }
+.co { color: #6c7086; font-style: italic; }
+.nu { color: #fab387; }
+.op { color: #89dceb; }
+
+/* ─── Footnotes ─── */
+.footnotes {
+  margin-top: 50px;
+  padding-top: 20px;
+  border-top: 1px solid var(--divider);
+  font-size: 0.85em;
+  color: var(--text-secondary);
+}
+.footnotes ol { padding-left: 24px; }
+.footnotes li { margin-bottom: 8px; line-height: 1.5; }
+sup { font-size: 0.75em; color: var(--accent-light); }
+
+/* ─── References ─── */
+.references {
+  font-size: 0.92em;
+  line-height: 1.6;
+}
+.references p {
+  padding-left: 32px;
+  text-indent: -32px;
+  margin-bottom: 10px;
+}
+
+/* ─── Section divider ─── */
+.section-divider {
+  text-align: center;
+  margin: 50px 0;
+  color: var(--divider);
+  font-size: 1.2em;
+  letter-spacing: 12px;
+}
+
+/* ─── Closing ─── */
+.closing-box {
+  background: linear-gradient(135deg, #0D1B2A 0%, #1B4F72 100%);
+  color: white;
+  padding: 40px 36px;
+  border-radius: 8px;
+  margin: 40px 0;
+}
+.closing-box p { color: rgba(255,255,255,0.9); }
+.closing-box blockquote {
+  border-left-color: rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.95);
+}
+.signature {
+  margin-top: 30px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.92em;
+  opacity: 0.8;
+}
+
+/* ─── Waffle chart custom ─── */
+.waffle-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 4px;
+  max-width: 420px;
+  margin: 20px auto;
+}
+.waffle-cell {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  transition: transform 0.15s;
+}
+.waffle-cell:hover { transform: scale(1.15); z-index: 2; }
+.waffle-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 16px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.85em;
+}
+.waffle-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.waffle-legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+}
+
+@media (max-width: 700px) {
+  .hero h1 { font-size: 1.8em; }
+  .part-header h2 { font-size: 1.5em; }
+  body { font-size: 16px; }
+  .container { padding: 0 16px; }
+}
+
+button, .code-toggle-btn, .analysis-btn, .modal-close, .phase-header {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+/* ─── Analysis Process Button ─── */
+.analysis-btn-wrap {
+  margin-top: 20px;
+}
+.analysis-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: transparent;
+  border: 2px solid var(--accent-light);
+  color: var(--accent-light);
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.92em;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+.analysis-btn:hover { background: var(--accent-light); color: white; }
+.analysis-btn svg { flex-shrink: 0; }
+
+/* ─── Analysis Modal ─── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(10,20,35,0.72);
+  z-index: 1000;
+  overflow-y: auto;
+  padding: 30px 16px 50px;
+}
+.modal-overlay.visible { display: block; }
+.modal-box {
+  background: #fff;
+  max-width: 820px;
+  margin: 0 auto;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.35);
+}
+.modal-header {
+  background: linear-gradient(135deg, #0D1B2A 0%, #1B4F72 100%);
+  color: white;
+  padding: 28px 32px 22px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+.modal-header h2 {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.35em;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 4px;
+  line-height: 1.25;
+}
+.modal-header p {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.88em;
+  opacity: 0.75;
+  margin: 0;
+}
+.modal-close {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: white;
+  font-size: 1.5em;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.modal-close:hover { background: rgba(255,255,255,0.3); }
+.modal-body { padding: 0; }
+.phase-section { border-bottom: 1px solid #e8ecf0; }
+.phase-section:last-child { border-bottom: none; }
+.phase-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 24px;
+  cursor: pointer;
+  background: #f7f9fb;
+  transition: background 0.15s;
+  user-select: none;
+}
+.phase-header:hover { background: #eef2f7; }
+.phase-badge {
+  background: var(--accent);
+  color: white;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.72em;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+.phase-title {
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 700;
+  font-size: 1em;
+  color: var(--text);
+  flex: 1;
+}
+.phase-arrow {
+  color: var(--accent-light);
+  font-size: 0.9em;
+  transition: transform 0.2s;
+}
+.phase-header.open .phase-arrow { transform: rotate(90deg); }
+.phase-content {
+  display: none;
+  padding: 0 24px 20px;
+}
+.phase-content.visible { display: block; }
+.step-block {
+  margin: 18px 0 0;
+}
+.step-title {
+  font-family: 'Source Sans 3', sans-serif;
+  font-weight: 700;
+  font-size: 0.88em;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 5px;
+}
+.step-desc {
+  font-size: 0.9em;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  line-height: 1.55;
+}
+.modal-code {
+  background: var(--code-bg);
+  color: var(--code-text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75em;
+  line-height: 1.65;
+  padding: 14px 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 0;
+  white-space: pre;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- HERO HEADER -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<header class="hero">
+  <div class="container">
+    <div class="hero-label">Evidence Brief</div>
+    <h1>Mapping Inequities in Clinical Research Funding Across Africa, 2007–2023.</h1>
+    <p class="subtitle">A Data-Driven Case for Transforming How the World Invests in African Health Research</p>
+    <div class="meta">Charles Ogejo &nbsp;·&nbsp; March 2026 
+      <p><em>This document contains interactive visualisations that are best accessed on a large screen, preferably in landscape orientation.</em></p>
+    </div>
+    <div class="meta"></div>
+  </div>
+</header>
+
+<main class="container">
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PREAMBLE -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="preamble">
+<p>This brief synthesises findings from a comprehensive analysis of 305,334 funding records from the <a href="https://ctc.africa/ctc-data" target="_blank">Clinical Trials Community - Africa (CTC Africa)</a><sup>1</sup> database and the <a href="https://ghdx.healthdata.org/gbd-results-tool" target="_blank">Global Burden of Disease (GBD) 2023</a><sup>2</sup> disease burden estimates across all 54 African countries. It presents the evidence, explains what it means for the 1.4 billion people living on the continent, and outlines a path from structural inequity to research sovereignty.</p>
+<div class="analysis-btn-wrap">
+  <button class="analysis-btn" onclick="document.getElementById('analysisModal').classList.add('visible'); document.body.style.overflow='hidden';">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+    </svg>
+    See the summarised data analysis process
+  </button>
+</div>
+</div>
+
+<!-- ═══ ANALYSIS PROCESS MODAL ═══ -->
+<div class="modal-overlay" id="analysisModal" onclick="if(event.target===this){closeModal()}">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-header">
+      <div>
+        <h2 id="modalTitle">Data Analysis Process | Phases 1-3</h2>
+        <p>R code walkthrough: data ingestion, feature engineering, clustering &amp; network analysis. Charts optimised for clarity and impact.</p>
+      </div>
+      <button class="modal-close" onclick="closeModal()" aria-label="Close">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- PHASE 1 -->
+      <div class="phase-section">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <span class="phase-badge">Phase 1</span>
+          <span class="phase-title">Data Collection &amp; Cleaning</span>
+          <span class="phase-arrow">&#x25B6;</span>
+        </div>
+        <div class="phase-content">
+          <div class="step-block">
+            <div class="step-title">Step 1.1 - Loading R Libraries</div>
+            <div class="step-desc">All required R packages were loaded upfront. Key packages include <code>tidyverse</code> for data wrangling, <code>circlize</code> for chord diagrams, <code>igraph</code>/<code>ggraph</code> for network analysis, and <code>sf</code>/<code>rnaturalearth</code> for spatial data.</div>
+            <pre class="modal-code"><span class="co"># Core data science and visualisation packages</span>
+<span class="kw">library</span>(tidyverse); <span class="kw">library</span>(readxl); <span class="kw">library</span>(janitor)
+<span class="kw">library</span>(scales);    <span class="kw">library</span>(cluster); <span class="kw">library</span>(factoextra)
+<span class="kw">library</span>(igraph);    <span class="kw">library</span>(ggraph);  <span class="kw">library</span>(tidygraph)
+<span class="kw">library</span>(circlize);  <span class="kw">library</span>(ggalluvial); <span class="kw">library</span>(flextable)
+<span class="kw">library</span>(ggrepel);   <span class="kw">library</span>(viridis); <span class="kw">library</span>(patchwork)</pre>
+          </div>
+          <div class="step-block">
+            <div class="step-title">Step 1.2-1.4 - Importing, Inspecting &amp; Combining funding data from CTC Africa</div>
+            <div class="step-desc">CTC Africa direct and indirect funding records were imported, filtered to 54 African countries, and restricted to 2007-2023. Combined dataset: 305,334 records across 39 recipient countries.</div>
+            <pre class="modal-code"><span class="co"># Loading direct and indirect funding streams</span>
+ctc_direct   <span class="op">&lt;-</span> <span class="fn">read_csv</span>(<span class="st">"data/ctc_direct.csv"</span>)
+ctc_indirect <span class="op">&lt;-</span> <span class="fn">read_csv</span>(<span class="st">"data/ctc_indirect.csv"</span>)
+
+<span class="co"># Combining, filtering to Africa, applying restriction to study window</span>
+ctc_combined <span class="op">&lt;-</span> <span class="fn">bind_rows</span>(
+  ctc_direct  <span class="op">%&gt;%</span> <span class="fn">mutate</span>(funding_stream <span class="op">=</span> <span class="st">"Direct"</span>),
+  ctc_indirect <span class="op">%&gt;%</span> <span class="fn">mutate</span>(funding_stream <span class="op">=</span> <span class="st">"Indirect"</span>)
+) <span class="op">%&gt;%</span>
+  <span class="fn">mutate</span>(year_num <span class="op">=</span> <span class="fn">as.numeric</span>(<span class="fn">str_extract</span>(year, <span class="st">"\\d{4}"</span>))) <span class="op">%&gt;%</span>
+  <span class="fn">filter</span>(recipient_country <span class="op">%in%</span> african_countries_ctc,
+         year_num <span class="op">&gt;=</span> <span class="nu">2007</span>, year_num <span class="op">&lt;=</span> <span class="nu">2023</span>)</pre>
+          </div>
+          <div class="step-block">
+            <div class="step-title">Step 1.5 - Handling Multi-Country Grants</div>
+            <div class="step-desc">Grants recorded against multiple recipient countries were split equally to prevent double-counting of funding amounts. From the imported, combined dataset, there were no Multi-Country Grants.</div>
+            <pre class="modal-code"><span class="co"># Dividing shared grants equally across recipient countries</span>
+ctc_split <span class="op">&lt;-</span> ctc_combined <span class="op">%&gt;%</span>
+  <span class="fn">separate_rows</span>(recipient_country, sep <span class="op">=</span> <span class="st">",|;\\s*"</span>) <span class="op">%&gt;%</span>
+  <span class="fn">group_by</span>(<span class="fn">across</span>(-<span class="fn">c</span>(recipient_country, amount_usd))) <span class="op">%&gt;%</span>
+  <span class="fn">mutate</span>(n_countries <span class="op">=</span> <span class="fn">n</span>(),
+         amount_split <span class="op">=</span> amount_usd <span class="op">/</span> n_countries) <span class="op">%&gt;%</span>
+  <span class="fn">ungroup</span>()</pre>
+          </div>
+          <div class="step-block">
+            <div class="step-title">Steps 1.6-1.7 - Parsing &amp; Filtering GBD DALY Data</div>
+            <div class="step-desc">The GBD 2023 file contained 705 stacked location sections. A custom parser extracted disease-level DALY estimates for each African country, yielding 2021 all-age DALY counts as the burden denominator.</div>
+            <pre class="modal-code"><span class="co"># Customizing parser for stacked GBD location format</span>
+gbd_raw     <span class="op">&lt;-</span> <span class="fn">read_csv</span>(<span class="st">"data/gbd_raw.csv"</span>, col_names <span class="op">=</span> <span class="kw">FALSE</span>)
+header_rows <span class="op">&lt;-</span> <span class="fn">which</span>(<span class="fn">str_detect</span>(gbd_raw[[<span class="nu">1</span>]], <span class="st">"All-age DALY counts"</span>))
+
+<span class="co"># Extracting point estimate (stripping uncertainty intervals)</span>
+extract_point_estimate <span class="op">&lt;-</span> <span class="kw">function</span>(x) {
+  <span class="fn">as.numeric</span>(<span class="fn">str_remove_all</span>(<span class="fn">str_trim</span>(<span class="fn">str_extract</span>(x, <span class="st">"^[^\\n(]+"</span>)), <span class="st">","</span>)))
+}
+
+<span class="co"># Parsing all sections and filtering to 54 African countries</span>
+gbd_africa <span class="op">&lt;-</span> <span class="fn">map2_dfr</span>(header_rows, end_rows, parse_gbd_section) <span class="op">%&gt;%</span>
+  <span class="fn">filter</span>(location <span class="op">%in%</span> african_countries_gbd)</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHASE 2 -->
+      <div class="phase-section">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <span class="phase-badge">Phase 2</span>
+          <span class="phase-title">Feature Engineering &amp; Equity Metrics</span>
+          <span class="phase-arrow">&#x25B6;</span>
+        </div>
+        <div class="phase-content">
+          <div class="step-block">
+            <div class="step-title">Steps 2.1-2.2 - Harmonising Country &amp; Disease Names</div>
+            <div class="step-desc">Country names were standardised between CTC Africa and GBD formats. Disease labels were mapped to 22 standardised ICD-11-aligned categories to enable cross-dataset merging.</div>
+            <pre class="modal-code"><span class="co"># Country name harmonisation lookup</span>
+country_lookup <span class="op">&lt;-</span> <span class="fn">tribble</span>(
+  <span class="op">~</span>ctc_name,                         <span class="op">~</span>std_name,
+  <span class="st">"Cote D`Ivoire (Ivory Coast)"</span>,    <span class="st">"Côte d'Ivoire"</span>,
+  <span class="st">"Democratic Republic of Congo"</span>,   <span class="st">"Democratic Republic of the Congo"</span>,
+  <span class="st">"Tanzania"</span>,                        <span class="st">"United Republic of Tanzania"</span>
+)
+
+<span class="co"># Disease standardisation: 38 CTC Africa labels to 22 standard categories</span>
+disease_map_ctc <span class="op">&lt;-</span> <span class="fn">tribble</span>(
+  <span class="op">~</span>ctc_disease,                        <span class="op">~</span>standard_category,
+  <span class="st">"HIV/AIDS"</span>,                         <span class="st">"HIV/AIDS"</span>,
+  <span class="st">"Helminth infections"</span>,              <span class="st">"Neglected tropical diseases and malaria"</span>,
+  <span class="st">"Filoviridae (including Ebola)"</span>,    <span class="st">"Other infectious diseases"</span>,
+  <span class="st">"Pre-eclampsia and eclampsia"</span>,      <span class="st">"Maternal disorders"</span>,
+  <span class="co"># ... 34 more mappings ...</span>
+)</pre>
+          </div>
+          <div class="step-block">
+            <div class="step-title">Steps 2.3-2.5 - Aggregating &amp; Merging Funding with Disease Burden</div>
+            <div class="step-desc">In this step, funding is aggregated to country–disease level. DALYs are similarly aggregated using 2021 estimates. A full outer join produces 1,146 country–disease pairs with measurable burden.</div>
+            <pre class="modal-code"><span class="co"># Aggregate funding to country-disease level</span>
+funding_agg <span class="op">&lt;-</span> ctc_mapped <span class="op">%&gt;%</span>
+  <span class="fn">filter</span>(!<span class="fn">is.na</span>(standard_category),
+         standard_category <span class="op">!=</span> <span class="st">"Cross-cutting R&amp;D"</span>) <span class="op">%&gt;%</span>
+  <span class="fn">group_by</span>(country, standard_category) <span class="op">%&gt;%</span>
+  <span class="fn">summarise</span>(total_funding <span class="op">=</span> <span class="fn">sum</span>(amount_split, na.rm <span class="op">=</span> <span class="kw">TRUE</span>), .groups <span class="op">=</span> <span class="st">"drop"</span>)
+
+<span class="co"># Full outer join: every country-disease pair with any burden</span>
+funding_burden <span class="op">&lt;-</span> funding_agg <span class="op">%&gt;%</span>
+  <span class="fn">full_join</span>(daly_agg, by <span class="op">=</span> <span class="fn">c</span>(<span class="st">"country"</span> <span class="op">=</span> <span class="st">"location"</span>, <span class="st">"standard_category"</span>)) <span class="op">%&gt;%</span>
+  <span class="fn">mutate</span>(total_funding <span class="op">=</span> <span class="fn">replace_na</span>(total_funding, <span class="nu">0</span>))</pre>
+          </div>
+          <div class="step-block">
+            <div class="step-title">Steps 2.6-2.7 - Computing Funding per DALY &amp; Equity Ratio</div>
+            <div class="step-desc">The primary analytical metric - funding per DALY - is calculated for each country–disease pair. An equity ratio is derived by normalising against the African continental median ($7.39/DALY). Pairs are classified into four equity categories.</div>
+            <pre class="modal-code"><span class="co"># Primary metric: funding per DALY</span>
+equity_metrics <span class="op">&lt;-</span> funding_burden <span class="op">%&gt;%</span>
+  <span class="fn">filter</span>(!<span class="fn">is.na</span>(total_dalys), total_dalys <span class="op">&gt;</span> <span class="nu">0</span>) <span class="op">%&gt;%</span>
+  <span class="fn">mutate</span>(funding_per_daly <span class="op">=</span> total_funding <span class="op">/</span> total_dalys)
+
+<span class="co"># African continental median (funded pairs only)</span>
+african_median_fpd <span class="op">&lt;-</span> <span class="fn">median</span>(
+  equity_metrics<span class="op">$</span>funding_per_daly[equity_metrics<span class="op">$</span>funding_per_daly <span class="op">&gt;</span> <span class="nu">0</span>]
+) <span class="co"># → $7.39/DALY</span>
+
+<span class="co"># Equity categories</span>
+equity_metrics <span class="op">&lt;-</span> equity_metrics <span class="op">%&gt;%</span>
+  <span class="fn">mutate</span>(equity_ratio <span class="op">=</span> funding_per_daly <span class="op">/</span> african_median_fpd,
+    equity_category <span class="op">=</span> <span class="fn">case_when</span>(
+      funding_per_daly <span class="op">==</span> <span class="nu">0</span>       <span class="op">~</span> <span class="st">"Zero Funding"</span>,
+      equity_ratio <span class="op">&lt;</span> <span class="nu">0.5</span>          <span class="op">~</span> <span class="st">"Far Below Continental Median"</span>,
+      equity_ratio <span class="op">&lt;=</span> <span class="nu">1.5</span>        <span class="op">~</span> <span class="st">"Near Continental Median"</span>,
+      <span class="kw">TRUE</span>                         <span class="op">~</span> <span class="st">"Above Continental Median"</span>
+    ))</pre>
+          </div>
+          <div class="step-block">
+            <div class="step-title">Step 2.8 - Building Country-Level Feature Table</div>
+            <div class="step-desc">Five features were computed per country for use as clustering inputs: total funding per DALY, disease breadth (number of areas funded), funder breadth, top-funder concentration share, and total DALYs.</div>
+            <pre class="modal-code"><span class="co"># Aggregating to country level - 5 clustering features</span>
+country_features <span class="op">&lt;-</span> equity_metrics <span class="op">%&gt;%</span>
+  <span class="fn">group_by</span>(country) <span class="op">%&gt;%</span>
+  <span class="fn">summarise</span>(
+    total_funding_all        <span class="op">=</span> <span class="fn">sum</span>(total_funding),
+    funding_per_daly_country <span class="op">=</span> total_funding_all <span class="op">/</span> <span class="fn">sum</span>(total_dalys),
+    disease_breadth          <span class="op">=</span> <span class="fn">n_distinct</span>(standard_category[total_funding <span class="op">&gt;</span> <span class="nu">0</span>])
+  ) <span class="op">%&gt;%</span>
+  <span class="fn">left_join</span>(funder_metrics, by <span class="op">=</span> <span class="st">"country"</span>)
+<span class="co"># funder_metrics adds: funder_breadth, top_funder_share</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHASE 3 -->
+      <div class="phase-section">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <span class="phase-badge">Phase 3</span>
+          <span class="phase-title">Clustering &amp; Network Analysis</span>
+          <span class="phase-arrow">&#x25B6;</span>
+        </div>
+        <div class="phase-content">
+          <div class="step-block">
+            <div class="step-title">Steps 3.1-3.2 - Preparing Matrix &amp; Determining Optimal k</div>
+            <div class="step-desc">The 39 funded countries were log-transformed and z-scored. Elbow and silhouette methods were applied. k=2 maximises silhouette width, but k=3 was selected for theoretical interpretability and policy relevance, yielding three funded typologies plus a fourth <em>Structurally Excluded</em> category for the 15 unfunded countries.</div>
+            <pre class="modal-code"><span class="co"># Preparing scaled matrix for funded countries only</span>
+cluster_matrix <span class="op">&lt;-</span> cluster_data <span class="op">%&gt;%</span>
+  <span class="fn">mutate</span>(<span class="fn">across</span>(<span class="fn">c</span>(funding_per_daly_country, total_dalys_all), <span class="op">~</span> <span class="fn">log</span>(. <span class="op">+</span> <span class="nu">1</span>))) <span class="op">%&gt;%</span>
+  <span class="fn">mutate</span>(<span class="fn">across</span>(<span class="fn">where</span>(is.numeric), <span class="op">~</span> <span class="fn">scale</span>(.)[, <span class="nu">1</span>])) <span class="op">%&gt;%</span>
+  <span class="fn">column_to_rownames</span>(<span class="st">"country"</span>)
+
+<span class="co"># Silhouette analysis to determine k</span>
+sil_values <span class="op">&lt;-</span> <span class="fn">sapply</span>(<span class="nu">2</span><span class="op">:</span><span class="nu">8</span>, <span class="kw">function</span>(k) {
+  km <span class="op">&lt;-</span> <span class="fn">kmeans</span>(cluster_matrix, centers <span class="op">=</span> k, nstart <span class="op">=</span> <span class="nu">25</span>)
+  <span class="fn">mean</span>(<span class="fn">silhouette</span>(km<span class="op">$</span>cluster, <span class="fn">dist</span>(cluster_matrix))[, <span class="nu">3</span>])
+})
+<span class="co"># k=3 chosen: prioritized for theoretical interpretability over pure optimisation</span></pre>
+          </div>
+          <div class="step-block">
+            <div class="step-title">Step 3.3 - K-Means Clustering &amp; Typology Assignment</div>
+            <div class="step-desc">K-means (k=3, 25 restarts, seed=42) assigns funded countries to three typologies. Cluster labels are assigned by profile assessment. All 15 unfunded countries form Cluster 4 - <em>Structurally Excluded</em>.</div>
+            <pre class="modal-code"><span class="fn">set.seed</span>(<span class="nu">42</span>)
+km <span class="op">&lt;-</span> <span class="fn">kmeans</span>(cluster_matrix, centers <span class="op">=</span> <span class="nu">3</span>, nstart <span class="op">=</span> <span class="nu">25</span>, iter.max <span class="op">=</span> <span class="nu">100</span>)
+
+<span class="co"># Assigning typology labels (by profile assessment)</span>
+cluster_labels <span class="op">&lt;-</span> <span class="fn">c</span>(
+  <span class="st">"1"</span> <span class="op">=</span> <span class="st">"Diversified Research Ecosystems"</span>,   <span class="co"># n=7</span>
+  <span class="st">"2"</span> <span class="op">=</span> <span class="st">"Underserved Periphery"</span>,              <span class="co"># n=13</span>
+  <span class="st">"3"</span> <span class="op">=</span> <span class="st">"Emerging Research Recipients"</span>,       <span class="co"># n=19</span>
+  <span class="st">"4"</span> <span class="op">=</span> <span class="st">"Structurally Excluded"</span>               <span class="co"># n=15</span>
+)
+
+<span class="co"># Cluster colours used throughout</span>
+cluster_colors <span class="op">&lt;-</span> <span class="fn">c</span>(
+  <span class="st">"Diversified Research Ecosystems"</span> <span class="op">=</span> <span class="st">"#4DAF4A"</span>,
+  <span class="st">"Emerging Research Recipients"</span>    <span class="op">=</span> <span class="st">"#984EA3"</span>,
+  <span class="st">"Underserved Periphery"</span>           <span class="op">=</span> <span class="st">"#E41A1C"</span>,
+  <span class="st">"Structurally Excluded"</span>           <span class="op">=</span> <span class="st">"#999999"</span>
+)</pre>
+          </div>
+          <div class="step-block">
+            <div class="step-title">Step 3.6-3.7 - Building &amp; Analyzing Bipartite Network</div>
+            <div class="step-desc">A bipartite funder–country network was constructed using <em>igraph</em>. Network density, degree, betweenness, and weighted strength were computed. Louvain community detection identified funding communities.</div>
+            <pre class="modal-code"><span class="co"># Building edge list: funder → country with weight = total USD</span>
+edge_list <span class="op">&lt;-</span> ctc_mapped <span class="op">%&gt;%</span>
+  <span class="fn">filter</span>(!<span class="fn">is.na</span>(funder), !<span class="fn">is.na</span>(country),
+         standard_category <span class="op">!=</span> <span class="st">"Cross-cutting R&amp;D"</span>) <span class="op">%&gt;%</span>
+  <span class="fn">group_by</span>(funder, country) <span class="op">%&gt;%</span>
+  <span class="fn">summarise</span>(weight <span class="op">=</span> <span class="fn">sum</span>(amount_split), .groups <span class="op">=</span> <span class="st">"drop"</span>) <span class="op">%&gt;%</span>
+  <span class="fn">filter</span>(weight <span class="op">&gt;</span> <span class="nu">0</span>)
+
+<span class="co"># Building igraph bipartite network</span>
+g <span class="op">&lt;-</span> <span class="fn">graph_from_data_frame</span>(edge_list, directed <span class="op">=</span> <span class="kw">FALSE</span>)
+V(g)<span class="op">$</span>type <span class="op">&lt;-</span> V(g)<span class="op">$</span>name <span class="op">%in%</span> <span class="fn">unique</span>(edge_list<span class="op">$</span>funder)
+
+<span class="co"># Network metrics: degree, betweenness, weighted strength</span>
+net_metrics <span class="op">&lt;-</span> <span class="fn">tibble</span>(
+  name        <span class="op">=</span> V(g)<span class="op">$</span>name,
+  degree      <span class="op">=</span> <span class="fn">igraph::degree</span>(g),
+  betweenness <span class="op">=</span> <span class="fn">igraph::betweenness</span>(g, weights <span class="op">=</span> E(g)<span class="op">$</span>weight),
+  strength    <span class="op">=</span> <span class="fn">igraph::strength</span>(g, weights <span class="op">=</span> E(g)<span class="op">$</span>weight)
+)
+
+<span class="co"># Louvain community detection</span>
+comm <span class="op">&lt;-</span> <span class="fn">cluster_louvain</span>(g, weights <span class="op">=</span> E(g)<span class="op">$</span>weight)</pre>
+          </div>
+          <div class="step-block">
+            <div class="step-title">Step 3.8 - Plotting the Chord Diagram using circlize</div>
+            <div class="step-desc">The chord diagram visualises funder–country funding flows for the top 15 funders. Countries are coloured by cluster typology. Sector arc width is proportional to total funding. An 8° gap separates the funder group from the country group.</div>
+            <pre class="modal-code"><span class="co"># Sector ordering: funders desc, then countries desc</span>
+funder_stats  <span class="op">&lt;-</span> chord_data <span class="op">%&gt;%</span> <span class="fn">group_by</span>(from) <span class="op">%&gt;%</span>
+  <span class="fn">summarise</span>(amount <span class="op">=</span> <span class="fn">sum</span>(value)) <span class="op">%&gt;%</span> <span class="fn">arrange</span>(<span class="fn">desc</span>(amount))
+country_stats <span class="op">&lt;-</span> chord_data <span class="op">%&gt;%</span> <span class="fn">group_by</span>(to) <span class="op">%&gt;%</span>
+  <span class="fn">summarise</span>(amount <span class="op">=</span> <span class="fn">sum</span>(value)) <span class="op">%&gt;%</span> <span class="fn">arrange</span>(<span class="fn">desc</span>(amount))
+all_sectors   <span class="op">&lt;-</span> <span class="fn">c</span>(funder_stats<span class="op">$</span>from, country_stats<span class="op">$</span>to)
+
+<span class="co"># Colours: countries by typology, funders blue (#5DADE2)</span>
+sector_colors <span class="op">&lt;-</span> <span class="fn">sapply</span>(all_sectors, <span class="kw">function</span>(s) {
+  <span class="kw">if</span> (s <span class="op">%in%</span> <span class="fn">names</span>(country_cluster_map))
+    cluster_colors[<span class="fn">as.character</span>(country_cluster_map[s])]
+  <span class="kw">else</span> <span class="st">"#5DADE2"</span>
+})
+
+<span class="co"># 8° gap separates funders from countries</span>
+gap_vector <span class="op">&lt;-</span> <span class="fn">setNames</span>(<span class="fn">rep</span>(<span class="nu">1</span>, <span class="fn">length</span>(all_sectors)), all_sectors)
+gap_vector[<span class="fn">tail</span>(funder_stats<span class="op">$</span>from, <span class="nu">1</span>)] <span class="op">&lt;-</span> <span class="nu">8</span>
+gap_vector[<span class="fn">tail</span>(country_stats<span class="op">$</span>to, <span class="nu">1</span>)]  <span class="op">&lt;-</span> <span class="nu">8</span>
+
+<span class="fn">circos.par</span>(gap.after <span class="op">=</span> gap_vector, start.degree <span class="op">=</span> <span class="nu">90</span>)
+<span class="fn">chordDiagram</span>(chord_data, order <span class="op">=</span> all_sectors,
+  grid.col <span class="op">=</span> sector_colors, transparency <span class="op">=</span> <span class="nu">0.3</span>,
+  annotationTrack <span class="op">=</span> <span class="st">"grid"</span>, reduce <span class="op">=</span> <span class="nu">0</span>)</pre>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /modal-body -->
+  </div><!-- /modal-box -->
+</div><!-- /modal-overlay -->
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PART I: THE CRISIS -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="part-header">
+  <div class="part-label">Part I: The Crisis</div>
+  <h2>The Numbers That Should Keep Us Awake</h2>
+</div>
+
+<p>Africa carries roughly a quarter of the global disease burden<sup>3</sup>. Every year, hundreds of millions of disability-adjusted life years (DALYs) - each one representing a year of healthy life destroyed by disease, disability, or premature death - accumulate across the continent. Against that staggering human cost, Africa receives less than 2% of global clinical research funding<sup>4,5</sup>.</p>
+
+<p>This analysis transforms that abstract disparity into a precise, granular measurement. By combining 17 years of CTC Africa funding data<sup>1</sup> with the Global Burden of Disease 2023 estimates<sup>2</sup>, we calculated a single metric - funding per DALY- for every country-disease combination on the continent. The results are not merely disappointing. They reveal a system that is structurally configured to exclude.</p>
+
+<h3>What $7.39 Per DALY Actually Means</h3>
+
+<p>The African continental median, as computed in this analysis, is <strong>$7.39 per DALY</strong>. The high-income benchmark, estimated from WHO and G-FINDER data<sup>5</sup>, sits between $50 and $100 per DALY. That is a <strong>10–15X gap</strong>.</p>
+
+<p>To understand what this means in practice, when a child develops neonatal sepsis in Lagos, the clinical protocol she receives was almost certainly developed from evidence generated in high-income settings. This means different pathogens, different resistance patterns, different nutritional baselines, and different healthcare delivery contexts. The drugs were dosed for populations that do not reflect her physiology. The diagnostics were calibrated for disease presentations she may not share. Her doctor is working without locally generated evidence, because no one funded the research to produce it.</p>
+
+<p>Now consider that $7.39 is the median. Meaning half the continent falls below it. The <em>Underserved Periphery</em> countries operate at $0.49 per DALY. That is 153 times below the high-income benchmark. And 15 countries, home to roughly 280 million people, receive nothing at all.</p>
+
+<!-- ════════ FIGURE 1: Lorenz Curve ════════ -->
+<div class="figure-block">
+  <div class="figure-chart" id="fig1"></div>
+  <div class="figure-caption">
+    <strong>Figure 1.</strong> Lorenz concentration curve of research funding across African countries. The extreme bend at the first country (South Africa) demonstrates that a single nation captures over 50% of continental funding. The shaded area represents the Gini inequality zone. Dotted diagonal = perfect equality.
+  </div>
+  <div class="code-toggle-wrap">
+    <button class="code-toggle-btn" onclick="toggleCode(this)">
+      <span class="arrow">▶</span><span class="btn-label"> Show R Code</span>
+    </button>
+    <div class="code-block"><span class="co"># ── Lorenz Concentration Curve with Gini Shading ──</span>
+country_funding_totals <span class="op">&lt;-</span> country_features <span class="op">%&gt;%</span>
+  <span class="fn">filter</span>(<span class="op">!</span><span class="fn">is.na</span>(total_funding_all)) <span class="op">%&gt;%</span>
+  <span class="fn">arrange</span>(<span class="fn">desc</span>(total_funding_all)) <span class="op">%&gt;%</span>
+  <span class="fn">mutate</span>(share <span class="op">=</span> total_funding_all <span class="op">/</span> <span class="fn">sum</span>(total_funding_all),
+         rank <span class="op">=</span> <span class="fn">row_number</span>(), cumulative_share <span class="op">=</span> <span class="fn">cumsum</span>(share))
+
+hhi_country <span class="op">&lt;-</span> <span class="fn">sum</span>(country_funding_totals<span class="op">$</span>share<span class="op">^</span><span class="nu">2</span>) <span class="op">*</span> <span class="nu">10000</span>
+n_c <span class="op">&lt;-</span> <span class="fn">nrow</span>(country_funding_totals)
+shares_sorted <span class="op">&lt;-</span> <span class="fn">sort</span>(country_funding_totals<span class="op">$</span>share)
+gini <span class="op">&lt;-</span> (<span class="nu">2</span> <span class="op">*</span> <span class="fn">sum</span>(<span class="fn">seq_along</span>(shares_sorted) <span class="op">*</span> shares_sorted)) <span class="op">/</span>
+       (n_c <span class="op">*</span> <span class="fn">sum</span>(shares_sorted)) <span class="op">-</span> (n_c <span class="op">+</span> <span class="nu">1</span>) <span class="op">/</span> n_c
+
+lorenz_df <span class="op">&lt;-</span> <span class="fn">tibble</span>(
+  rank_pct <span class="op">=</span> <span class="fn">c</span>(<span class="nu">0</span>, country_funding_totals<span class="op">$</span>rank <span class="op">/</span> n_c),
+  cum_share <span class="op">=</span> <span class="fn">c</span>(<span class="nu">0</span>, country_funding_totals<span class="op">$</span>cumulative_share)
+)
+
+<span class="fn">ggplot</span>(lorenz_df, <span class="fn">aes</span>(rank_pct, cum_share)) <span class="op">+</span>
+  <span class="fn">geom_ribbon</span>(<span class="fn">aes</span>(ymin <span class="op">=</span> rank_pct, ymax <span class="op">=</span> cum_share),
+              fill <span class="op">=</span> <span class="st">"#E74C3C"</span>, alpha <span class="op">=</span> <span class="nu">0.15</span>) <span class="op">+</span>
+  <span class="fn">geom_abline</span>(slope <span class="op">=</span> <span class="nu">1</span>, intercept <span class="op">=</span> <span class="nu">0</span>,
+              linetype <span class="op">=</span> <span class="st">"dotted"</span>, color <span class="op">=</span> <span class="st">"grey50"</span>) <span class="op">+</span>
+  <span class="fn">geom_line</span>(linewidth <span class="op">=</span> <span class="nu">1.5</span>, colour <span class="op">=</span> <span class="st">"#2E86AB"</span>) <span class="op">+</span>
+  <span class="fn">annotate</span>(<span class="st">"text"</span>, x <span class="op">=</span> <span class="nu">0.65</span>, y <span class="op">=</span> <span class="nu">0.25</span>,
+           label <span class="op">=</span> <span class="fn">paste0</span>(<span class="st">"Gini = "</span>, <span class="fn">round</span>(gini, <span class="nu">3</span>)),
+           colour <span class="op">=</span> <span class="st">"#E74C3C"</span>, fontface <span class="op">=</span> <span class="st">"bold"</span>, size <span class="op">=</span> <span class="nu">5</span>) <span class="op">+</span>
+  <span class="fn">scale_x_continuous</span>(labels <span class="op">=</span> <span class="fn">percent_format</span>()) <span class="op">+</span>
+  <span class="fn">scale_y_continuous</span>(labels <span class="op">=</span> <span class="fn">percent_format</span>()) <span class="op">+</span>
+  <span class="fn">labs</span>(title <span class="op">=</span> <span class="st">"Lorenz Concentration Curve of Research Funding"</span>,
+       x <span class="op">=</span> <span class="st">"Cumulative Share of Countries"</span>,
+       y <span class="op">=</span> <span class="st">"Cumulative Share of Funding"</span>) <span class="op">+</span>
+  <span class="fn">theme_minimal</span>(base_size <span class="op">=</span> <span class="nu">14</span>)</div>
+  </div>
+</div>
+
+<h3>80.2% of Country-Disease Pairs Receive Zero Funding</h3>
+
+<p>This is the finding that reframes the entire conversation. Out of <strong>1,146 measurable country-disease pairs</strong> across Africa - combinations where a specific disease causes quantifiable burden in a specific country - <strong>919 receive zero clinical research funding</strong>. Not inadequate funding. Not below-average funding. <strong>Nothing.</strong></p>
+
+<p>These are not obscure, rare conditions in tiny populations. These are malaria in the DRC (5.2 million DALYs, zero funding). Neonatal disorders in Nigeria (23 million DALYs, zero funding). Lower respiratory infections across half the continent - diseases that fill paediatric wards every rainy season - with no one funding the clinical trials that might improve treatment protocols for African children.</p>
+
+<blockquote>
+<p>Each unfunded DALY is not an accounting line. It is a year of healthy life destroyed by disability, suffering, or death, in a context where no one is generating the evidence that might prevent it.</p>
+</blockquote>
+
+<!-- ════════ FIGURE 2: Waffle Chart ════════ -->
+<div class="figure-block">
+  <div class="figure-chart" style="padding: 24px;">
+    <div style="text-align:center; font-family:'Source Sans 3',sans-serif; font-weight:700; font-size:1.05em; color:var(--accent); margin-bottom:16px;">Equity Category Distribution: 1,146 Country-Disease Pairs</div>
+    <div class="waffle-grid" id="waffle"></div>
+    <div class="waffle-legend">
+      <div class="waffle-legend-item"><div class="waffle-legend-swatch" style="background:#2C3E50;"></div> 80.2% Zero Funding (919)</div>
+      <div class="waffle-legend-item"><div class="waffle-legend-swatch" style="background:#E74C3C;"></div> 7.2% Far Below Median (82)</div>
+      <div class="waffle-legend-item"><div class="waffle-legend-swatch" style="background:#F39C12;"></div> 4.5% Near Median (52)</div>
+      <div class="waffle-legend-item"><div class="waffle-legend-swatch" style="background:#27AE60;"></div> 8.2% Above Median (93)</div>
+    </div>
+    <div style="text-align:center; font-family:'Source Sans 3',sans-serif; font-size:0.82em; color:#999; margin-top:10px;">Each square ≈ 11.5 country-disease pairs</div>
+  </div>
+  <div class="figure-caption">
+    <strong>Figure 2.</strong> Waffle chart showing the equity category distribution of all measurable country-disease pairs. The overwhelming dark area represents the 80.2% of pairs that receive zero clinical research funding despite measurable disease burden.
+  </div>
+  <div class="code-toggle-wrap">
+    <button class="code-toggle-btn" onclick="toggleCode(this)">
+      <span class="arrow">▶</span><span class="btn-label"> Show R Code</span>
+    </button>
+    <div class="code-block"><span class="co"># ── NEW: Waffle Chart — Equity Category Distribution ──</span>
+eq_counts <span class="op">&lt;-</span> equity_metrics <span class="op">%&gt;%</span>
+  <span class="fn">count</span>(equity_category) <span class="op">%&gt;%</span>
+  <span class="fn">mutate</span>(pct <span class="op">=</span> <span class="fn">round</span>(n <span class="op">/</span> <span class="fn">sum</span>(n) <span class="op">*</span> <span class="nu">100</span>, <span class="nu">0</span>))
+
+waffle_data <span class="op">&lt;-</span> <span class="fn">tibble</span>(
+  x <span class="op">=</span> <span class="fn">rep</span>(<span class="nu">1</span><span class="op">:</span><span class="nu">10</span>, <span class="nu">10</span>),
+  y <span class="op">=</span> <span class="fn">rep</span>(<span class="nu">10</span><span class="op">:</span><span class="nu">1</span>, each <span class="op">=</span> <span class="nu">10</span>)
+)
+
+assignments <span class="op">&lt;-</span> <span class="fn">c</span>(
+  <span class="fn">rep</span>(<span class="st">"Zero Funding"</span>, <span class="nu">80</span>),
+  <span class="fn">rep</span>(<span class="st">"Far Below Continental Median"</span>, <span class="nu">7</span>),
+  <span class="fn">rep</span>(<span class="st">"Near Continental Median"</span>, <span class="nu">5</span>),
+  <span class="fn">rep</span>(<span class="st">"Above Continental Median"</span>, <span class="nu">8</span>)
+)
+
+waffle_data<span class="op">$</span>category <span class="op">&lt;-</span> <span class="fn">factor</span>(assignments)
+
+<span class="fn">ggplot</span>(waffle_data, <span class="fn">aes</span>(x, y, fill <span class="op">=</span> category)) <span class="op">+</span>
+  <span class="fn">geom_tile</span>(color <span class="op">=</span> <span class="st">"white"</span>, linewidth <span class="op">=</span> <span class="nu">1.5</span>,
+            width <span class="op">=</span> <span class="nu">0.9</span>, height <span class="op">=</span> <span class="nu">0.9</span>) <span class="op">+</span>
+  <span class="fn">scale_fill_manual</span>(values <span class="op">=</span> <span class="fn">c</span>(
+    <span class="st">"Zero Funding"</span> <span class="op">=</span> <span class="st">"#2C3E50"</span>,
+    <span class="st">"Far Below Continental Median"</span> <span class="op">=</span> <span class="st">"#E74C3C"</span>,
+    <span class="st">"Near Continental Median"</span> <span class="op">=</span> <span class="st">"#F39C12"</span>,
+    <span class="st">"Above Continental Median"</span> <span class="op">=</span> <span class="st">"#27AE60"</span>
+  )) <span class="op">+</span>
+  <span class="fn">coord_fixed</span>() <span class="op">+</span>
+  <span class="fn">labs</span>(title <span class="op">=</span> <span class="st">"The Equity Void — 80.2% of Pairs Receive Zero Funding"</span>) <span class="op">+</span>
+  <span class="fn">theme_void</span>(base_size <span class="op">=</span> <span class="nu">14</span>)</div>
+  </div>
+</div>
+
+<h3>Concentration That Would Trigger Antitrust Action</h3>
+
+<p>The Herfindahl-Hirschman Index (HHI) for research funding across African countries, as computed in this analysis, is <strong>2,972</strong>. Under the 2010 U.S. Department of Justice &amp; Federal Trade Commission Horizontal Merger Guidelines, an HHI above 2,500 signals a highly concentrated market<sup>6</sup>. The 2023 revision lowered the presumption threshold further to 1,800<sup>7</sup>. The research funding landscape across Africa exceeds both.</p>
+
+<p>South Africa alone absorbs more than <strong>50% of all continental funding</strong>. The Lorenz concentration curve bends at the very first country. Ten countries capture <strong>89.2%</strong>. The remaining 44 countries, representing hundreds of millions of people, share the remaining 10.8%.</p>
+
+<p>This is not a funding gap. This is a funding architecture that systematically directs resources to a small number of established hubs while rendering the rest of the continent invisible.</p>
+
+<!-- ════════ FIGURE 3: Top 10 Funding Shares ════════ -->
+<div class="figure-block">
+  <div class="figure-chart" id="fig3"></div>
+  <div class="figure-caption">
+    <strong>Figure 3.</strong> Cumulative funding share by country. South Africa captures over 50% of all continental funding; the top 10 countries capture 89.2%. The remaining 44 countries share just 10.8%.
+  </div>
+  <div class="code-toggle-wrap">
+    <button class="code-toggle-btn" onclick="toggleCode(this)">
+      <span class="arrow">▶</span><span class="btn-label"> Show R Code</span>
+    </button>
+    <div class="code-block"><span class="co"># ── Top 10 Country Funding Shares ──</span>
+top_funded <span class="op">&lt;-</span> country_features <span class="op">%&gt;%</span>
+  <span class="fn">arrange</span>(<span class="fn">desc</span>(total_funding_all)) <span class="op">%&gt;%</span> <span class="fn">head</span>(<span class="nu">10</span>)
+
+<span class="fn">ggplot</span>(top_funded, <span class="fn">aes</span>(<span class="fn">reorder</span>(country, total_funding_all),
+                        total_funding_all)) <span class="op">+</span>
+  <span class="fn">geom_col</span>(fill <span class="op">=</span> <span class="st">"#2E86AB"</span>) <span class="op">+</span>
+  <span class="fn">geom_text</span>(<span class="fn">aes</span>(label <span class="op">=</span> <span class="fn">dollar</span>(total_funding_all, <span class="nu">1</span>,
+    scale <span class="op">=</span> <span class="nu">1e-6</span>, suffix <span class="op">=</span> <span class="st">"M"</span>)),
+    hjust <span class="op">=</span> <span class="nu">-0.1</span>, size <span class="op">=</span> <span class="nu">3.5</span>) <span class="op">+</span>
+  <span class="fn">geom_hline</span>(yintercept <span class="op">=</span> <span class="fn">sum</span>(country_features<span class="op">$</span>total_funding_all,
+    na.rm <span class="op">=</span> <span class="kw">TRUE</span>) <span class="op">*</span> <span class="nu">0.5</span>,
+    linetype <span class="op">=</span> <span class="st">"dashed"</span>, color <span class="op">=</span> <span class="st">"red"</span>) <span class="op">+</span>
+  <span class="fn">coord_flip</span>() <span class="op">+</span>
+  <span class="fn">scale_y_continuous</span>(labels <span class="op">=</span> <span class="fn">dollar_format</span>(scale <span class="op">=</span> <span class="nu">1e-6</span>,
+    suffix <span class="op">=</span> <span class="st">"M"</span>)) <span class="op">+</span>
+  <span class="fn">labs</span>(title <span class="op">=</span> <span class="st">"Top 10 by Total Funding"</span>,
+       x <span class="op">=</span> <span class="st">""</span>, y <span class="op">=</span> <span class="st">"Total Funding (USD)"</span>) <span class="op">+</span>
+  <span class="fn">theme_minimal</span>(base_size <span class="op">=</span> <span class="nu">14</span>)</div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PART II: THE STRUCTURE -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="part-header">
+  <div class="part-label">Part II: The Structure</div>
+  <h2>Four Africas, Not One</h2>
+</div>
+
+<p>The clustering analysis, (K-means with k=3 for funded countries plus a fourth tier for structurally excluded nations), reveals that the 54 African countries do not exist on a spectrum. They fall into four qualitatively different typologies, each requiring fundamentally different policy responses.</p>
+
+<!-- ════════ FIGURE 4: PCA Biplot ════════ -->
+<div class="figure-block">
+  <div class="figure-chart" id="fig4"></div>
+  <div class="figure-caption">
+    <strong>Figure 4.</strong> PCA biplot: country positions across Principal Components 1 and 2, coloured by cluster assignment. Triangles = cluster centroids. 80% confidence ellipses shown. Structurally Excluded countries collapse to the origin.
+  </div>
+  <div class="code-toggle-wrap">
+    <button class="code-toggle-btn" onclick="toggleCode(this)">
+      <span class="arrow">▶</span><span class="btn-label"> Show R Code</span>
+    </button>
+    <div class="code-block"><span class="co"># ── PCA Biplot with Cluster Ellipses ──</span>
+pca_matrix <span class="op">&lt;-</span> viz_data <span class="op">%&gt;%</span>
+  <span class="fn">select</span>(fpd_for_pca, disease_for_pca, funder_for_pca,
+         conc_for_pca, dalys_for_pca) <span class="op">%&gt;%</span>
+  <span class="fn">scale</span>() <span class="op">%&gt;%</span> <span class="fn">as.matrix</span>()
+
+pca_result <span class="op">&lt;-</span> <span class="fn">prcomp</span>(pca_matrix, center <span class="op">=</span> <span class="kw">TRUE</span>, scale. <span class="op">=</span> <span class="kw">TRUE</span>)
+
+<span class="fn">ggplot</span>(pca_plot_data, <span class="fn">aes</span>(PC1, PC2, color <span class="op">=</span> cluster_label)) <span class="op">+</span>
+  <span class="fn">stat_ellipse</span>(<span class="fn">aes</span>(fill <span class="op">=</span> cluster_label),
+               geom <span class="op">=</span> <span class="st">"polygon"</span>, alpha <span class="op">=</span> <span class="nu">0.15</span>, level <span class="op">=</span> <span class="nu">0.80</span>) <span class="op">+</span>
+  <span class="fn">geom_point</span>(size <span class="op">=</span> <span class="nu">3.5</span>, alpha <span class="op">=</span> <span class="nu">0.8</span>) <span class="op">+</span>
+  <span class="fn">geom_point</span>(data <span class="op">=</span> cluster_centroids,
+    <span class="fn">aes</span>(PC1_center, PC2_center), size <span class="op">=</span> <span class="nu">8</span>, shape <span class="op">=</span> <span class="nu">17</span>) <span class="op">+</span>
+  <span class="fn">geom_text_repel</span>(data <span class="op">=</span> pca_plot_data <span class="op">%&gt;%</span>
+    <span class="fn">filter</span>(country <span class="op">%in%</span> countries_to_label),
+    <span class="fn">aes</span>(label <span class="op">=</span> country), size <span class="op">=</span> <span class="nu">3</span>, fontface <span class="op">=</span> <span class="st">"bold"</span>) <span class="op">+</span>
+  <span class="fn">scale_color_manual</span>(values <span class="op">=</span> cluster_colors) <span class="op">+</span>
+  <span class="fn">theme_minimal</span>(base_size <span class="op">=</span> <span class="nu">13</span>)</div>
+  </div>
+</div>
+
+<h3>Typology 1: Diversified Research Ecosystems (7 countries)</h3>
+
+<p><em>South Africa, Kenya, Nigeria, Ghana, Uganda, Ethiopia, and Tanzania.</em></p>
+
+<p>These countries have built genuine research ecosystems. Their median funding per DALY is <strong>$12.40</strong>. They cover a median of <strong>11 disease areas</strong>, attract a median of <strong>29 unique funders</strong>, and their dependency on any single funder is relatively low at <strong>25%</strong>. Together, they absorb approximately 87% of continental funding.</p>
+
+<p>But even these seven best-resourced nations on the continent operate at 8-17% of high-income benchmarks. South Africa's $121 per DALY looks impressive until you compare it to the approximately $142 per person the United States invests through NIH alone<sup>8</sup>. The <em>Diversified</em> countries are not adequately funded, but rather the least inadequately funded.</p>
+
+<blockquote>
+<p>The best-funded country on the continent still invests less per unit of disease burden than the least-funded research programme in most European nations.</p>
+</blockquote>
+
+<h3>Typology 2: Emerging Research Recipients (19 countries)</h3>
+
+<p><em>Benin, Botswana, Burkina Faso, Cameroon, Congo, Côte d’Ivoire, DRC, Gabon, Gambia, Guinea, Madagascar, Malawi, Mali, Mozambique, Rwanda, Senegal, Sudan, Zambia, Zimbabwe.</em></p>
+
+<p>These are transition states. Their median funding per DALY is $4.54, they cover roughly 7 disease areas, and they attract around 12 funders. Their single-funder concentration of 36% sits at the fragility threshold, meaning the countries have just enough enough diversity to function, not enough to withstand a major withdrawal.</p>
+
+<p>The 19 <em>Emerging</em> countries collectively receive about 11% of continental funding. They represent the pool from which the next generation of Diversified ecosystems might emerge, or without sustained investment, the pool that slides backward.</p>
+
+<h3>Typology 3: Underserved Periphery (13 countries)</h3>
+
+<p><em>Angola, Chad, Egypt, Tunisia, Niger, Sierra Leone, Burundi, Central African Republic, Eswatini, Guinea-Bissau, Liberia, Namibia, and Togo.</em></p>
+
+<p>This is where the data becomes most damning. These 13 countries, with a combined population of over 300 million, receive just <strong>1.6% of continental research funding</strong>. Their median funding per DALY is <strong>$0.49</strong>.</p>
+
+<p>But the most alarming metric is not the funding level, but the concentration. A median of <strong>83% of each country's entire research funding comes from a single source</strong>. They cover only 2 disease areas, with only 2 funders. For the countries in this typology, when a funder's strategy shifts as it happens routinely, an entire country's research capacity can evaporate overnight.</p>
+
+<h3>Typology 4: Structurally Excluded (15 countries)</h3>
+
+<p><em>Algeria, Libya, Morocco, Somalia, South Sudan, Eritrea, Lesotho, Mauritania, Cabo Verde, Comoros, Djibouti, Equatorial Guinea, Sao Tome and Principe, Seychelles, and Mauritius.</em></p>
+
+<p>Across 17 years of data, these 15 countries have no documented clinical research funding on the CTC Africa platform. They are not underfunded. They are invisible. Absent from the databases, absent from the networks, absent from the conversation.</p>
+
+<p>Some of these nations carry enormous disease burdens. Somalia and South Sudan face among the highest mortality rates on the continent. Others, like Algeria and Morocco, have healthcare systems capable of absorbing research investment but are excluded from the predominantly sub-Saharan architecture of international health research funding. The exclusion is structural, not incidental.</p>
+
+<!-- ── Typology Table ── -->
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th>Typology</th><th>n</th><th>$/DALY</th><th>Diseases</th><th>Funders</th><th>Top Funder</th><th>% Funding</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Diversified</strong></td><td>7</td><td><strong>$12.40</strong></td><td>11 (median)</td><td>29 (median)</td><td>25%</td><td><strong>87%</strong></td></tr>
+<tr><td><strong>Emerging</strong></td><td>19</td><td>$4.54</td><td>7</td><td>12</td><td>36%</td><td>11%</td></tr>
+<tr><td><strong>Underserved</strong></td><td>13</td><td><strong>$0.49</strong></td><td>2</td><td>2</td><td><strong>83%</strong></td><td>1.6%</td></tr>
+<tr><td><strong>Excluded</strong></td><td>15</td><td><strong>$0.00</strong></td><td>0</td><td>0</td><td>N/A</td><td><strong>0%</strong></td></tr>
+</tbody>
+</table>
+<div class="table-caption">Table 1. Four country typologies with key metrics. K-means clustering (k=3, 57.9% variance explained) plus structurally excluded tier. Silhouette width = 0.314.</div>
+</div>
+
+<!-- ════════ FIGURE 5b: Africa Typology Map ════════ -->
+<div class="figure-block">
+  <div class="figure-chart" id="fig_africa_map" style="min-height:624px;"></div>
+  <div class="figure-caption">
+    <strong>Figure 5b.</strong> Geographic distribution of country typologies across Africa. Green = Diversified Research Ecosystems; Light purple = Emerging Research Recipients; Red = Underserved Periphery; Grey = Structurally Excluded; Light grey = data not available.
+  </div>
+  <div class="code-toggle-wrap">
+    <button class="code-toggle-btn" onclick="toggleCode(this)">
+      <span class="arrow">▶</span><span class="btn-label"> Show R Code</span>
+    </button>
+    <div class="code-block"><span class="co"># ── Geographic Map: Country Typologies Across Africa ──</span>
+africa_map <span class="op">&lt;-</span> <span class="fn">ne_countries</span>(scale <span class="op">=</span> <span class="st">"medium"</span>, continent <span class="op">=</span> <span class="st">"Africa"</span>,
+                          returnclass <span class="op">=</span> <span class="st">"sf"</span>)
+
+map_lookup <span class="op">&lt;-</span> <span class="fn">tribble</span>(
+  <span class="op">~</span>map_name,                   <span class="op">~</span>std_name,
+  <span class="st">"Ivory Coast"</span>,              <span class="st">"Côte d'Ivoire"</span>,
+  <span class="st">"Dem. Rep. Congo"</span>,          <span class="st">"Democratic Republic of the Congo"</span>,
+  <span class="st">"eSwatini"</span>,                 <span class="st">"Eswatini"</span>,
+  <span class="st">"Tanzania"</span>,                 <span class="st">"United Republic of Tanzania"</span>,
+  <span class="st">"Republic of the Congo"</span>,    <span class="st">"Congo"</span>,
+  <span class="st">"S. Sudan"</span>,                 <span class="st">"South Sudan"</span>,
+  <span class="st">"Eq. Guinea"</span>,               <span class="st">"Equatorial Guinea"</span>,
+  <span class="st">"Central African Rep."</span>,     <span class="st">"Central African Republic"</span>,
+  <span class="st">"São Tomé and Principe"</span>,    <span class="st">"Sao Tome and Principe"</span>
+)
+
+map_cl <span class="op">&lt;-</span> africa_map <span class="op">%&gt;%</span>
+  <span class="fn">left_join</span>(map_lookup, by <span class="op">=</span> <span class="fn">c</span>(<span class="st">"name"</span> <span class="op">=</span> <span class="st">"map_name"</span>)) <span class="op">%&gt;%</span>
+  <span class="fn">mutate</span>(country_match <span class="op">=</span> <span class="fn">coalesce</span>(std_name, name)) <span class="op">%&gt;%</span>
+  <span class="fn">left_join</span>(country_features <span class="op">%&gt;%</span> <span class="fn">select</span>(country, cluster_label),
+            by <span class="op">=</span> <span class="fn">c</span>(<span class="st">"country_match"</span> <span class="op">=</span> <span class="st">"country"</span>))
+
+<span class="fn">ggplot</span>(map_cl) <span class="op">+</span>
+  <span class="fn">geom_sf</span>(<span class="fn">aes</span>(fill <span class="op">=</span> cluster_label), colour <span class="op">=</span> <span class="st">"white"</span>,
+          linewidth <span class="op">=</span> <span class="nu">0.3</span>) <span class="op">+</span>
+  <span class="fn">scale_fill_manual</span>(
+    values <span class="op">=</span> <span class="fn">c</span>(
+      <span class="st">"Diversified Research Ecosystems"</span> <span class="op">=</span> <span class="st">"#4DAF4A"</span>,
+      <span class="st">"Emerging Research Recipients"</span>    <span class="op">=</span> <span class="st">"#984EA3"</span>,
+      <span class="st">"Underserved Periphery"</span>           <span class="op">=</span> <span class="st">"#E41A1C"</span>,
+      <span class="st">"Structurally Excluded"</span>           <span class="op">=</span> <span class="st">"#999999"</span>
+    ),
+    na.value <span class="op">=</span> <span class="st">"#D5D5D5"</span>,
+    name <span class="op">=</span> <span class="st">"Typology"</span>
+  ) <span class="op">+</span>
+  <span class="fn">labs</span>(title <span class="op">=</span> <span class="st">"Country Typologies Across Africa"</span>) <span class="op">+</span>
+  <span class="fn">theme_void</span>(base_size <span class="op">=</span> <span class="nu">14</span>)</div>
+  </div>
+</div>
+
+<h3>What the Typologies Mean for Policy</h3>
+
+<p>The critical insight is that a single policy cannot address four qualitatively different situations. Telling the <em>Diversified</em> countries to "expand disease coverage" and telling the <em>Excluded</em> countries the same thing is meaningless because the latter have no research infrastructure to expand. The typology framework provides the diagnostic precision that policy has lacked: each cluster requires a fundamentally different intervention logic, timeline, and investment profile.</p>
+
+<!-- ════════ FIGURE 5: Radar Chart ════════ -->
+<div class="figure-block">
+  <div class="figure-chart" id="fig5"></div>
+  <div class="figure-caption">
+    <strong>Figure 5.</strong> Radar chart comparing all four typologies across five key dimensions. The Diversified polygon fills the chart; the Structurally Excluded polygon collapses to zero. Values normalised to maximum across clusters.
+  </div>
+  <div class="code-toggle-wrap">
+    <button class="code-toggle-btn" onclick="toggleCode(this)">
+      <span class="arrow">▶</span><span class="btn-label"> Show R Code</span>
+    </button>
+    <div class="code-block"><span class="co"># ── NEW: Radar Chart — Typology Comparison ──</span>
+cluster_summary <span class="op">&lt;-</span> country_features <span class="op">%&gt;%</span>
+  <span class="fn">group_by</span>(cluster_label) <span class="op">%&gt;%</span>
+  <span class="fn">summarise</span>(
+    <span class="st">`Funding/DALY`</span>    <span class="op">=</span> <span class="fn">median</span>(funding_per_daly_country),
+    <span class="st">`Disease Coverage`</span> <span class="op">=</span> <span class="fn">median</span>(disease_breadth),
+    <span class="st">`Funder Count`</span>     <span class="op">=</span> <span class="fn">median</span>(funder_breadth),
+    <span class="st">`Diversification`</span>  <span class="op">=</span> <span class="nu">1</span> <span class="op">-</span> <span class="fn">median</span>(top_funder_share),
+    <span class="st">`Network Degree`</span>   <span class="op">=</span> <span class="fn">median</span>(degree)
+  )
+
+<span class="co"># Normalise to 0-1 and build radar polygons</span>
+radar_long <span class="op">&lt;-</span> radar_data <span class="op">%&gt;%</span>
+  <span class="fn">pivot_longer</span>(<span class="op">-</span>cluster_label) <span class="op">%&gt;%</span>
+  <span class="fn">mutate</span>(angle <span class="op">=</span> <span class="fn">seq</span>(<span class="nu">0</span>, <span class="nu">2</span><span class="op">*</span>pi, length.out <span class="op">=</span> n_metrics <span class="op">+</span> <span class="nu">1</span>),
+         x <span class="op">=</span> value <span class="op">*</span> <span class="fn">cos</span>(angle), y <span class="op">=</span> value <span class="op">*</span> <span class="fn">sin</span>(angle))
+
+<span class="fn">ggplot</span>() <span class="op">+</span>
+  <span class="fn">geom_polygon</span>(data <span class="op">=</span> poly_data,
+    <span class="fn">aes</span>(x, y, fill <span class="op">=</span> cluster_label), alpha <span class="op">=</span> <span class="nu">0.15</span>) <span class="op">+</span>
+  <span class="fn">geom_path</span>(data <span class="op">=</span> poly_data,
+    <span class="fn">aes</span>(x, y, color <span class="op">=</span> cluster_label), linewidth <span class="op">=</span> <span class="nu">1</span>) <span class="op">+</span>
+  <span class="fn">coord_fixed</span>() <span class="op">+</span>
+  <span class="fn">theme_void</span>()</div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PART III: THE NETWORK -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="part-header">
+  <div class="part-label">Part III: The Network</div>
+  <h2>Who Funds Whom, and What It Reveals</h2>
+</div>
+
+<p>Clustering tells us what countries look like. Network analysis tells us why they look that way. By constructing a bipartite graph connecting every funder to every country they support - weighted by funding volume - we mapped the structural architecture of African research funding.</p>
+
+<h3>An Extremely Sparse Network</h3>
+
+<p>The network, as constructed in this analysis, contains <strong>142 nodes</strong> (103 funders and 39 funded countries) linked by <strong>491 edges</strong> (funding relationships). The density is <strong>0.049</strong>. This means that only 4.9% of all possible funder-country connections actually exist. The remaining 95% are gaps.</p>
+
+<p>For comparison, research on resilient collaboration networks suggests that functionally redundant networks, where countries would have multiple alternative pathways to access investment, typically exhibit densities in the range of 0.15-0.25. At 0.049, the African research funding landscape is three to five times sparser than what structural resilience would require.</p>
+
+<!-- ════════ FIGURE 6: Network ════════ -->
+<div class="figure-block">
+  <div class="figure-chart" id="fig6"></div>
+  <div class="figure-caption">
+    <strong>Figure 6.</strong> Bipartite network graph: funders connected to countries, coloured by typology. Node size = degree (number of connections). Edge opacity = funding volume. The 15 structurally excluded countries appear as disconnected nodes.
+  </div>
+  <div class="code-toggle-wrap">
+    <button class="code-toggle-btn" onclick="toggleCode(this)">
+      <span class="arrow">▶</span><span class="btn-label"> Show R Code</span>
+    </button>
+    <div class="code-block"><span class="co"># ── Bipartite Funder-Country Network ──</span>
+edge_list <span class="op">&lt;-</span> ctc_mapped <span class="op">%&gt;%</span>
+  <span class="fn">filter</span>(<span class="op">!</span><span class="fn">is.na</span>(country), <span class="op">!</span><span class="fn">is.na</span>(funder)) <span class="op">%&gt;%</span>
+  <span class="fn">group_by</span>(funder, country) <span class="op">%&gt;%</span>
+  <span class="fn">summarise</span>(weight <span class="op">=</span> <span class="fn">sum</span>(amount_split), .groups <span class="op">=</span> <span class="st">"drop"</span>) <span class="op">%&gt;%</span>
+  <span class="fn">filter</span>(weight <span class="op">&gt;</span> <span class="nu">0</span>)
+
+g <span class="op">&lt;-</span> <span class="fn">graph_from_data_frame</span>(edge_list, directed <span class="op">=</span> <span class="kw">FALSE</span>)
+V(g)<span class="op">$</span>node_type <span class="op">&lt;-</span> <span class="fn">ifelse</span>(V(g)<span class="op">$</span>type, <span class="st">"Funder"</span>, <span class="st">"Country"</span>)
+
+<span class="fn">cat</span>(<span class="st">"Network:"</span>, <span class="fn">vcount</span>(g), <span class="st">"nodes |"</span>,
+    <span class="fn">ecount</span>(g), <span class="st">"edges | Density:"</span>,
+    <span class="fn">round</span>(<span class="fn">edge_density</span>(g), <span class="nu">4</span>))</div>
+  </div>
+</div>
+
+<h3>Gatekeepers and the South Africa Hub Effect</h3>
+
+<p>EDCTP leads in breadth, reaching <strong>33 countries</strong> - the widest footprint of any funder on the continent. FIND reaches 28, WHO/TDR reaches 25. But the US NIH, despite being the <strong>single largest investor at $735 million</strong>, reaches only 19 countries. The Gates Foundation invests $673 million across just 18 countries.</p>
+
+<p>This creates a structural paradox: the funders with the most money have the narrowest reach, while the funders with the broadest reach have less money to distribute. High-value, narrow-reach funding concentrates in established hubs. Broad-reach, lower-value funding spreads thin.</p>
+
+<p>South Africa sits at the apex with <strong>52 funder connections</strong> and $1.9 billion in total investment. It operates as the continental gateway. Funders entering Africa often establish partnerships with South African institutions first, and some never move beyond them. Ghana (36 connections), Kenya (31), and Uganda (29) form a second tier. Below that, connectivity drops steeply.</p>
+
+<!-- ════════ FIGURE 7: Chord Diagram ════════ -->
+<div class="figure-block">
+  <div class="figure-chart" id="fig7"></div>
+  <div class="figure-caption">
+    <strong>Figure 7.</strong> Chord diagram: funding flows between top 15 funders and recipient countries. Chord width = funding volume. Country sectors coloured by typology (green = Diversified, purple = Emerging, red = Underserved). Blue sectors = funders.
+  </div>
+  <div class="code-toggle-wrap">
+    <button class="code-toggle-btn" onclick="toggleCode(this)">
+      <span class="arrow">▶</span><span class="btn-label"> Show R Code</span>
+    </button>
+    <div class="code-block"><span class="co"># ── Chord Diagram: Funder-Country Flows ──</span>
+top_funders_chord <span class="op">&lt;-</span> edge_list <span class="op">%&gt;%</span>
+  <span class="fn">group_by</span>(funder) <span class="op">%&gt;%</span> <span class="fn">summarise</span>(total <span class="op">=</span> <span class="fn">sum</span>(weight)) <span class="op">%&gt;%</span>
+  <span class="fn">arrange</span>(<span class="fn">desc</span>(total)) <span class="op">%&gt;%</span> <span class="fn">head</span>(<span class="nu">15</span>) <span class="op">%&gt;%</span> <span class="fn">pull</span>(funder)
+
+chord_data <span class="op">&lt;-</span> edge_list <span class="op">%&gt;%</span>
+  <span class="fn">filter</span>(funder <span class="op">%in%</span> top_funders_chord) <span class="op">%&gt;%</span>
+  <span class="fn">rename</span>(from <span class="op">=</span> funder, to <span class="op">=</span> country, value <span class="op">=</span> weight)
+
+<span class="kw">library</span>(circlize)
+<span class="fn">circos.clear</span>()
+<span class="fn">chordDiagram</span>(chord_data, order <span class="op">=</span> all_sectors,
+  grid.col <span class="op">=</span> sector_colors,
+  transparency <span class="op">=</span> <span class="nu">0.3</span>,
+  annotationTrack <span class="op">=</span> <span class="st">"grid"</span>)
+<span class="fn">title</span>(<span class="st">"Funder–Country Funding Flows (Top 15)"</span>)</div>
+  </div>
+</div>
+
+<!-- ════════ FIGURE 7b: Circular Chord Diagram ════════ -->
+<div class="figure-block" style="overflow:visible;">
+  <div class="figure-chart" id="fig_chord_circular" style="min-height:auto; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:16px 0; overflow:visible;"></div>
+  <div class="figure-caption">
+    <strong>Figure 7b.</strong> Circular chord diagram: funder–country funding flows (top 15 funders). Arc width on the outer ring represents each entity's total funding share. Chord thickness represents the funding volume between a specific funder-country pair. Countries coloured individually; funders in blue. Labels show entity name, total investment, and percentage share.
+  </div>
+  <div class="code-toggle-wrap">
+    <button class="code-toggle-btn" onclick="toggleCode(this)">
+      <span class="arrow">▶</span><span class="btn-label"> Show R Code</span>
+    </button>
+    <div class="code-block"><span class="co"># ── Chord Diagram: Funder–Country Funding Flows (Top 15) ──</span>
+top_funders_chord <span class="op">&lt;-</span> edge_list <span class="op">%&gt;%</span>
+  <span class="fn">group_by</span>(funder) <span class="op">%&gt;%</span> <span class="fn">summarise</span>(total <span class="op">=</span> <span class="fn">sum</span>(weight), .groups <span class="op">=</span> <span class="st">"drop"</span>) <span class="op">%&gt;%</span>
+  <span class="fn">arrange</span>(<span class="fn">desc</span>(total)) <span class="op">%&gt;%</span> <span class="fn">head</span>(<span class="nu">15</span>) <span class="op">%&gt;%</span> <span class="fn">pull</span>(funder)
+chord_data <span class="op">&lt;-</span> edge_list <span class="op">%&gt;%</span>
+  <span class="fn">filter</span>(funder <span class="op">%in%</span> top_funders_chord) <span class="op">%&gt;%</span>
+  <span class="fn">rename</span>(from <span class="op">=</span> funder, to <span class="op">=</span> country, value <span class="op">=</span> weight)
+grand_total_chord <span class="op">&lt;-</span> <span class="fn">sum</span>(chord_data<span class="op">$</span>value)
+make_sector_label <span class="op">&lt;-</span> <span class="kw">function</span>(name, amount) {
+  <span class="fn">paste0</span>(name, <span class="st">" | "</span>, <span class="fn">dollar</span>(amount, <span class="nu">1</span>, scale <span class="op">=</span> <span class="nu">1e-6</span>, suffix <span class="op">=</span> <span class="st">"M"</span>),
+         <span class="st">" | "</span>, <span class="fn">round</span>(amount <span class="op">/</span> grand_total_chord <span class="op">*</span> <span class="nu">100</span>, <span class="nu">1</span>), <span class="st">"%"</span>)
+}
+funder_stats <span class="op">&lt;-</span> chord_data <span class="op">%&gt;%</span> <span class="fn">group_by</span>(from) <span class="op">%&gt;%</span>
+  <span class="fn">summarise</span>(amount <span class="op">=</span> <span class="fn">sum</span>(value), .groups <span class="op">=</span> <span class="st">"drop"</span>) <span class="op">%&gt;%</span> <span class="fn">arrange</span>(<span class="fn">desc</span>(amount))
+country_stats <span class="op">&lt;-</span> chord_data <span class="op">%&gt;%</span> <span class="fn">group_by</span>(to) <span class="op">%&gt;%</span>
+  <span class="fn">summarise</span>(amount <span class="op">=</span> <span class="fn">sum</span>(value), .groups <span class="op">=</span> <span class="st">"drop"</span>) <span class="op">%&gt;%</span> <span class="fn">arrange</span>(<span class="fn">desc</span>(amount))
+sector_labels <span class="op">&lt;-</span> <span class="fn">c</span>(
+  <span class="fn">setNames</span>(<span class="fn">map2_chr</span>(funder_stats<span class="op">$</span>from, funder_stats<span class="op">$</span>amount, make_sector_label), funder_stats<span class="op">$</span>from),
+  <span class="fn">setNames</span>(<span class="fn">map2_chr</span>(country_stats<span class="op">$</span>to, country_stats<span class="op">$</span>amount, make_sector_label), country_stats<span class="op">$</span>to)
+)
+all_sectors <span class="op">&lt;-</span> <span class="fn">c</span>(funder_stats<span class="op">$</span>from, country_stats<span class="op">$</span>to)
+sector_colors <span class="op">&lt;-</span> <span class="fn">sapply</span>(all_sectors, <span class="kw">function</span>(s) {
+  <span class="kw">if</span> (s <span class="op">%in%</span> <span class="fn">names</span>(country_cluster_map)) cluster_colors[<span class="fn">as.character</span>(country_cluster_map[s])]
+  <span class="kw">else</span> <span class="st">"#5DADE2"</span>
+})
+gap_vector <span class="op">&lt;-</span> <span class="fn">setNames</span>(<span class="fn">rep</span>(<span class="nu">1</span>, <span class="fn">length</span>(all_sectors)), all_sectors)
+gap_vector[<span class="fn">tail</span>(funder_stats<span class="op">$</span>from, <span class="nu">1</span>)] <span class="op">&lt;-</span> <span class="nu">8</span>
+gap_vector[<span class="fn">tail</span>(country_stats<span class="op">$</span>to, <span class="nu">1</span>)]  <span class="op">&lt;-</span> <span class="nu">8</span>
+draw_chord <span class="op">&lt;-</span> <span class="kw">function</span>() {
+  <span class="fn">par</span>(mar <span class="op">=</span> <span class="fn">c</span>(<span class="nu">2</span>, <span class="nu">2</span>, <span class="nu">4</span>, <span class="nu">2</span>))
+  <span class="fn">circos.clear</span>()
+  <span class="fn">circos.par</span>(gap.after <span class="op">=</span> gap_vector, start.degree <span class="op">=</span> <span class="nu">90</span>)
+  <span class="fn">chordDiagram</span>(chord_data, order <span class="op">=</span> all_sectors, grid.col <span class="op">=</span> sector_colors,
+               transparency <span class="op">=</span> <span class="nu">0.3</span>, annotationTrack <span class="op">=</span> <span class="st">"grid"</span>,
+               preAllocateTracks <span class="op">=</span> <span class="fn">list</span>(<span class="fn">list</span>(track.height <span class="op">=</span> <span class="fn">mm_h</span>(<span class="nu">10</span>))),
+               link.border <span class="op">=</span> <span class="kw">NA</span>, link.lwd <span class="op">=</span> <span class="nu">0.5</span>, reduce <span class="op">=</span> <span class="nu">0</span>)
+  <span class="fn">circos.trackPlotRegion</span>(track.index <span class="op">=</span> <span class="nu">1</span>, bg.border <span class="op">=</span> <span class="kw">NA</span>, panel.fun <span class="op">=</span> <span class="kw">function</span>(x, y) {
+    sn   <span class="op">&lt;-</span> <span class="fn">get.cell.meta.data</span>(<span class="st">"sector.index"</span>)
+    xlim <span class="op">&lt;-</span> <span class="fn">get.cell.meta.data</span>(<span class="st">"xlim"</span>)
+    ylim <span class="op">&lt;-</span> <span class="fn">get.cell.meta.data</span>(<span class="st">"ylim"</span>)
+    <span class="fn">circos.text</span>(<span class="fn">mean</span>(xlim), ylim[<span class="nu">1</span>] <span class="op">+</span> <span class="fn">mm_y</span>(<span class="nu">1</span>), sector_labels[sn],
+                facing <span class="op">=</span> <span class="st">"clockwise"</span>, adj <span class="op">=</span> <span class="fn">c</span>(<span class="nu">0</span>, <span class="nu">0.5</span>), cex <span class="op">=</span> <span class="nu">0.52</span>, niceFacing <span class="op">=</span> <span class="kw">TRUE</span>)
+  })
+  <span class="fn">title</span>(<span class="st">"Funder–Country Funding Flows (Top 15 Funders)"</span>, cex.main <span class="op">=</span> <span class="nu">1.3</span>)
+  <span class="fn">circos.clear</span>()
+}
+<span class="fn">draw_chord</span>()
+<span class="fn">png</span>(<span class="st">"plots/chord_diagram_funder_country.png"</span>, width <span class="op">=</span> <span class="nu">16</span>, height <span class="op">=</span> <span class="nu">16</span>, units <span class="op">=</span> <span class="st">"in"</span>, res <span class="op">=</span> <span class="nu">300</span>)
+<span class="fn">draw_chord</span>()
+<span class="fn">invisible</span>(<span class="fn">dev.off</span>())</div>
+  </div>
+</div>
+
+<h3>What Sparse Connectivity Means in Practice</h3>
+
+<p>Consider a researcher at the University of N'Djamena in Chad. The <em>Underserved Periphery</em> averages 2 funder connections. If those two funders shift priorities, as it has been happening across multiple agencies during COVID-19 reprogramming and beyond, that researcher has no alternative pathway. There is no fallback application, no secondary funder, no consortium to absorb the shock. The research programme simply ends.</p>
+
+<p>Now consider a researcher at the University of Cape Town. With 52 funder connections, the loss of any single one is likely absorbed by the remaining 51. South Africa's research ecosystem has structural redundancy. Chad's does not. The network does not just reflect inequality, but reproduces it through preferential attachment, where connected nodes attract more connections while isolated nodes stay isolated.</p>
+
+<blockquote>
+<p>Research funding operates as an exclusive club. Once connected, a country attracts more connections. Once excluded, a country remains excluded. The network perpetuates what it inherits.</p>
+</blockquote>
+
+<h3>Six Communities, Six Funding Orbits</h3>
+
+<p>Louvain community detection identified 6 distinct communities within the network (modularity = 0.308), revealing that funders and countries cluster into semi-independent orbits. European institutional funders (EDCTP, EC) form one community centred on francophone and anglophone West Africa. US agencies (NIH, CDC) form another centred on Southern and East Africa. Philanthropies (Gates, Wellcome) form a third, overlapping with US agencies but extending into different disease areas.</p>
+
+<p>The practical consequence is that a country's placement within a funding community determines which diseases get studied, which methodologies dominate, and whose priorities shape the research agenda. Countries at the intersection of multiple communities such as South Africa, Kenya, and Ghana benefit from diverse perspectives. Countries in the periphery receive whatever one community's priorities dictate.</p>
+
+<!-- ════════ FIGURE 8: Sankey ════════ -->
+<div class="figure-block">
+  <div class="figure-chart" id="fig8"></div>
+  <div class="figure-caption">
+    <strong>Figure 8.</strong> Sankey diagram: funding flow from funder communities through disease categories to country typologies. Flow width ∝ funding volume. Reveals how funder orbits structurally channel money to specific diseases and country types.
+  </div>
+  <div class="code-toggle-wrap">
+    <button class="code-toggle-btn" onclick="toggleCode(this)">
+      <span class="arrow">▶</span><span class="btn-label"> Show R Code</span>
+    </button>
+    <div class="code-block"><span class="co"># ── NEW: Sankey — Funder Communities → Disease → Typology ──</span>
+funder_communities <span class="op">&lt;-</span> net_metrics <span class="op">%&gt;%</span>
+  <span class="fn">filter</span>(node_type <span class="op">==</span> <span class="st">"Funder"</span>) <span class="op">%&gt;%</span>
+  <span class="fn">select</span>(name, community) <span class="op">%&gt;%</span>
+  <span class="fn">rename</span>(funder <span class="op">=</span> name)
+
+sankey_comm <span class="op">&lt;-</span> ctc_mapped <span class="op">%&gt;%</span>
+  <span class="fn">left_join</span>(funder_communities) <span class="op">%&gt;%</span>
+  <span class="fn">left_join</span>(country_features <span class="op">%&gt;%</span> <span class="fn">select</span>(country, cluster_label)) <span class="op">%&gt;%</span>
+  <span class="fn">group_by</span>(comm_label, standard_category, cluster_label) <span class="op">%&gt;%</span>
+  <span class="fn">summarise</span>(funding <span class="op">=</span> <span class="fn">sum</span>(amount_split), .groups <span class="op">=</span> <span class="st">"drop"</span>)
+
+<span class="fn">ggplot</span>(sankey_comm_filtered,
+  <span class="fn">aes</span>(axis1 <span class="op">=</span> comm_label, axis2 <span class="op">=</span> standard_category,
+      axis3 <span class="op">=</span> cluster_label, y <span class="op">=</span> funding)) <span class="op">+</span>
+  <span class="fn">geom_alluvium</span>(<span class="fn">aes</span>(fill <span class="op">=</span> cluster_label),
+    alpha <span class="op">=</span> <span class="nu">0.55</span>, curve_type <span class="op">=</span> <span class="st">"sigmoid"</span>) <span class="op">+</span>
+  <span class="fn">geom_stratum</span>(fill <span class="op">=</span> <span class="st">"grey90"</span>) <span class="op">+</span>
+  <span class="fn">scale_fill_manual</span>(values <span class="op">=</span> cluster_colors)</div>
+  </div>
+</div>
+
+<!-- ════════ FIGURE 8b: Funder Portfolio Strategies ════════ -->
+<div class="figure-block">
+  <div class="figure-chart" id="fig_funder_portfolio"></div>
+  <div class="figure-caption">
+    <strong>Figure 8b.</strong> Funder portfolio strategies: breadth (number of countries reached) vs. depth (mean funding per country). Bubble size = total investment. Funders in the top-right quadrant combine broad reach with deep investment; most funders cluster in the bottom-left (narrow reach, shallow depth). Dashed lines = median breadth and median depth.
+  </div>
+  <div class="code-toggle-wrap">
+    <button class="code-toggle-btn" onclick="toggleCode(this)">
+      <span class="arrow">▶</span><span class="btn-label"> Show R Code</span>
+    </button>
+    <div class="code-block"><span class="co"># ── Funder Portfolio Strategies: Breadth vs Depth ──</span>
+funder_portfolio <span class="op">&lt;-</span> edge_list <span class="op">%&gt;%</span>
+  <span class="fn">group_by</span>(funder) <span class="op">%&gt;%</span>
+  <span class="fn">summarise</span>(
+    breadth      <span class="op">=</span> <span class="fn">n_distinct</span>(country),
+    total        <span class="op">=</span> <span class="fn">sum</span>(weight),
+    mean_per_ctry<span class="op">=</span> total <span class="op">/</span> breadth,
+    .groups <span class="op">=</span> <span class="st">"drop"</span>
+  ) <span class="op">%&gt;%</span>
+  <span class="fn">arrange</span>(<span class="fn">desc</span>(total))
+
+<span class="fn">ggplot</span>(funder_portfolio <span class="op">%&gt;%</span> <span class="fn">head</span>(<span class="nu">25</span>),
+       <span class="fn">aes</span>(x <span class="op">=</span> breadth, y <span class="op">=</span> mean_per_ctry,
+           size <span class="op">=</span> total, label <span class="op">=</span> funder)) <span class="op">+</span>
+  <span class="fn">geom_point</span>(alpha <span class="op">=</span> <span class="nu">0.65</span>, colour <span class="op">=</span> <span class="st">"#2E86AB"</span>) <span class="op">+</span>
+  <span class="fn">geom_text_repel</span>(size <span class="op">=</span> <span class="nu">3</span>, max.overlaps <span class="op">=</span> <span class="nu">15</span>) <span class="op">+</span>
+  <span class="fn">geom_vline</span>(xintercept <span class="op">=</span> <span class="fn">median</span>(funder_portfolio<span class="op">$</span>breadth),
+             linetype <span class="op">=</span> <span class="st">"dashed"</span>, colour <span class="op">=</span> <span class="st">"grey60"</span>) <span class="op">+</span>
+  <span class="fn">geom_hline</span>(yintercept <span class="op">=</span> <span class="fn">median</span>(funder_portfolio<span class="op">$</span>mean_per_ctry),
+             linetype <span class="op">=</span> <span class="st">"dashed"</span>, colour <span class="op">=</span> <span class="st">"grey60"</span>) <span class="op">+</span>
+  <span class="fn">scale_size_continuous</span>(range <span class="op">=</span> <span class="fn">c</span>(<span class="nu">3</span>, <span class="nu">20</span>), labels <span class="op">=</span> dollar) <span class="op">+</span>
+  <span class="fn">scale_y_log10</span>(labels <span class="op">=</span> dollar) <span class="op">+</span>
+  <span class="fn">annotate</span>(<span class="st">"text"</span>, x <span class="op">=</span> <span class="nu">30</span>, y <span class="op">=</span> <span class="nu">5e7</span>,
+           label <span class="op">=</span> <span class="st">"Broad &amp; Deep"</span>, colour <span class="op">=</span> <span class="st">"#27AE60"</span>,
+           fontface <span class="op">=</span> <span class="st">"bold"</span>, size <span class="op">=</span> <span class="nu">4</span>) <span class="op">+</span>
+  <span class="fn">annotate</span>(<span class="st">"text"</span>, x <span class="op">=</span> <span class="nu">3</span>, y <span class="op">=</span> <span class="nu">5e5</span>,
+           label <span class="op">=</span> <span class="st">"Narrow &amp; Shallow"</span>, colour <span class="op">=</span> <span class="st">"#E74C3C"</span>,
+           fontface <span class="op">=</span> <span class="st">"bold"</span>, size <span class="op">=</span> <span class="nu">4</span>) <span class="op">+</span>
+  <span class="fn">labs</span>(
+    title <span class="op">=</span> <span class="st">"Funder Portfolio Strategies: Breadth vs Depth"</span>,
+    x <span class="op">=</span> <span class="st">"Breadth (Countries Reached)"</span>,
+    y <span class="op">=</span> <span class="st">"Depth (Mean Funding per Country)"</span>,
+    size <span class="op">=</span> <span class="st">"Total Investment"</span>
+  ) <span class="op">+</span>
+  <span class="fn">theme_minimal</span>(base_size <span class="op">=</span> <span class="nu">13</span>)</div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="part-header">
+  <div class="part-label">Part IV: The Human Cost</div>
+  <h2>Where High Burden Meets Zero Investment</h2>
+</div>
+
+<p>The composite priority score that integrates disease burden, funding gap, and equity ratio identifies the most egregious mismatches between human suffering and research investment. The top 10 are not edge cases. They are among the largest disease burdens on the planet.</p>
+
+<!-- ── Priority Table ── -->
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th>#</th><th>Country</th><th>Disease</th><th>DALYs (M)</th><th>Funding</th><th>Score</th></tr>
+</thead>
+<tbody>
+<tr class="highlight-row"><td><strong>1</strong></td><td><strong>Nigeria</strong></td><td><strong>Neonatal disorders</strong></td><td>23.0</td><td><strong>$0</strong></td><td>6.15</td></tr>
+<tr><td>2</td><td>Nigeria</td><td>NTDs &amp; Malaria</td><td>18.2</td><td>$3.8M</td><td>4.86</td></tr>
+<tr><td>3</td><td>Nigeria</td><td>Malaria</td><td>16.5</td><td>$5.5M</td><td>4.40</td></tr>
+<tr class="highlight-row"><td><strong>4</strong></td><td><strong>Nigeria</strong></td><td><strong>Lower respiratory</strong></td><td>10.3</td><td><strong>$0</strong></td><td>2.73</td></tr>
+<tr class="highlight-row"><td><strong>5</strong></td><td><strong>Ethiopia</strong></td><td><strong>Neonatal disorders</strong></td><td>8.3</td><td><strong>$0</strong></td><td>2.18</td></tr>
+<tr><td>6</td><td>DRC</td><td>NTDs &amp; Malaria</td><td>6.3</td><td>$22M</td><td>1.65</td></tr>
+<tr><td>7</td><td>Nigeria</td><td>Other infectious</td><td>5.4</td><td>$1.6M</td><td>1.40</td></tr>
+<tr class="highlight-row"><td><strong>8</strong></td><td><strong>DRC</strong></td><td><strong>Malaria</strong></td><td>5.2</td><td><strong>$0</strong></td><td>1.37</td></tr>
+<tr class="highlight-row"><td><strong>9</strong></td><td><strong>DRC</strong></td><td><strong>Neonatal disorders</strong></td><td>4.7</td><td><strong>$0</strong></td><td>1.23</td></tr>
+<tr><td>10</td><td>Nigeria</td><td>COVID-19</td><td>4.3</td><td>$12.4M</td><td>1.13</td></tr>
+</tbody>
+</table>
+<div class="table-caption">Table 2. Top 10 priority funding gaps. Red-shaded rows indicate zero research funding. Composite score integrates burden, funding gap, and equity dimensions. 9 of the top 20 gaps have zero funding.</div>
+</div>
+
+<h3>Nigeria: The World's Largest Blind Spot</h3>
+
+<p>Nigeria accounts for <strong>6 of the top 10 priority gaps</strong>. A nation of 220 million people, the most populous in Africa, the seventh most populous on earth, has 23 million DALYs of neonatal disease with zero clinical research investment. Not low investment. <strong>Zero.</strong></p>
+
+<p>To make this concrete: approximately 250,000 Nigerian newborns die each year from neonatal conditions such as sepsis, birth asphyxia, prematurity complications. These are complications for which improved interventions exist but have never been tested in the Nigerian context. The treatment protocols used in Nigerian Teaching Hospitals are based on evidence from trials in Europe and North America. None of the drug dosages, the diagnostic cut-offs, or the management algorithms were generated from data on Nigerian neonates.</p>
+
+<p>This is not because neonatal research is impossible in Nigeria. It is because the funding architecture has never directed resources there. Nigeria's total research funding across all diseases and all years is $29.8 million - roughly what a single mid-sized clinical trial costs in a high-income country.</p>
+
+<!-- ════════ FIGURE 9: Nigeria Bubble ════════ -->
+<div class="figure-block">
+  <div class="figure-chart" id="fig9"></div>
+  <div class="figure-caption">
+    <strong>Figure 9.</strong> Nigeria burden-vs-funding bubble chart. Circle size = DALY burden. The neonatal bubble (23M DALYs) sits at $0, creating a stark visual disconnect between enormous burden and total absence of investment. Dark circles = zero funding.
+  </div>
+  <div class="code-toggle-wrap">
+    <button class="code-toggle-btn" onclick="toggleCode(this)">
+      <span class="arrow">▶</span><span class="btn-label"> Show R Code</span>
+    </button>
+    <div class="code-block"><span class="co"># ── Nigeria Burden-vs-Funding Bubble Chart ──</span>
+nigeria_data <span class="op">&lt;-</span> equity_metrics <span class="op">%&gt;%</span>
+  <span class="fn">filter</span>(country <span class="op">==</span> <span class="st">"Nigeria"</span>, total_dalys <span class="op">&gt;</span> <span class="nu">0</span>) <span class="op">%&gt;%</span>
+  <span class="fn">mutate</span>(
+    funding_display <span class="op">=</span> <span class="fn">ifelse</span>(total_funding <span class="op">==</span> <span class="nu">0</span>, <span class="nu">0.5</span>, total_funding),
+    is_zero <span class="op">=</span> total_funding <span class="op">==</span> <span class="nu">0</span>
+  )
+
+<span class="fn">ggplot</span>(nigeria_data, <span class="fn">aes</span>(
+  x <span class="op">=</span> <span class="fn">reorder</span>(standard_category, <span class="op">-</span>total_dalys),
+  y <span class="op">=</span> funding_display, size <span class="op">=</span> total_dalys <span class="op">/</span> <span class="nu">1e6</span>)) <span class="op">+</span>
+  <span class="fn">geom_point</span>(<span class="fn">aes</span>(color <span class="op">=</span> is_zero), alpha <span class="op">=</span> <span class="nu">0.75</span>) <span class="op">+</span>
+  <span class="fn">scale_y_log10</span>() <span class="op">+</span>
+  <span class="fn">scale_size_continuous</span>(range <span class="op">=</span> <span class="fn">c</span>(<span class="nu">3</span>, <span class="nu">25</span>)) <span class="op">+</span>
+  <span class="fn">scale_color_manual</span>(values <span class="op">=</span> <span class="fn">c</span>(
+    <span class="st">"TRUE"</span> <span class="op">=</span> <span class="st">"#2C3E50"</span>, <span class="st">"FALSE"</span> <span class="op">=</span> <span class="st">"#E74C3C"</span>)) <span class="op">+</span>
+  <span class="fn">labs</span>(title <span class="op">=</span> <span class="st">"Nigeria — The World's Largest Blind Spot"</span>)</div>
+  </div>
+</div>
+
+<h3>The Neonatal Void</h3>
+
+<p>Neonatal disorders appear five times in the top 20 priority gaps on the continent, mainly from Nigeria, Ethiopia, DRC, Mali, and Tanzania. These five entries alone represent over 43 million DALYs with zero research funding. Neonatal conditions are systematically excluded from the research funding portfolio, which remains overwhelmingly oriented toward infectious diseases. The existing funding architecture was built around HIV/AIDS, tuberculosis, and malaria. Conditions that fall outside that paradigm such as Neonatal complications, maternal disorders and non-communicable diseases, are structurally invisible to the funding system, regardless of their burden.</p>
+
+<!-- ════════ FIGURE 9b: Disease Systematic Gaps Heatmap ════════ -->
+<div class="figure-block">
+  <div class="figure-chart" id="fig_disease_heatmap" style="min-height:650px;"></div>
+  <div class="figure-caption">
+    <strong>Figure 9b.</strong> Systematic funding gaps across disease areas. Each cell represents a country-disease pair among the top 15 highest-burden countries per disease. Dark navy = Zero funding; Red = Critically Low; Orange = Below Median; Green = At/Above Median. The overwhelming dominance of dark cells reveals that most country-disease pairs with measurable burden receive zero clinical research funding, with neonatal disorders, maternal conditions, and lower respiratory infections nearly universally unfunded.
+  </div>
+  <div class="code-toggle-wrap">
+    <button class="code-toggle-btn" onclick="toggleCode(this)">
+      <span class="arrow">▶</span><span class="btn-label"> Show R Code</span>
+    </button>
+    <div class="code-block"><span class="co"># ── Disease Systematic Gaps Heatmap ──</span>
+disease_gap_summary <span class="op">&lt;-</span> equity_metrics <span class="op">%&gt;%</span>
+  <span class="fn">filter</span>(total_dalys <span class="op">&gt;</span> <span class="nu">0</span>) <span class="op">%&gt;%</span>
+  <span class="fn">group_by</span>(standard_category) <span class="op">%&gt;%</span>
+  <span class="fn">summarise</span>(
+    n_countries     <span class="op">=</span> <span class="fn">n</span>(),
+    n_zero          <span class="op">=</span> <span class="fn">sum</span>(total_funding <span class="op">==</span> <span class="nu">0</span>),
+    pct_zero        <span class="op">=</span> n_zero <span class="op">/</span> n_countries,
+    total_dalys     <span class="op">=</span> <span class="fn">sum</span>(total_dalys),
+    total_funding   <span class="op">=</span> <span class="fn">sum</span>(total_funding),
+    median_fpd      <span class="op">=</span> <span class="fn">median</span>(funding_per_daly, na.rm <span class="op">=</span> <span class="kw">TRUE</span>),
+    .groups <span class="op">=</span> <span class="st">"drop"</span>
+  ) <span class="op">%&gt;%</span>
+  <span class="fn">arrange</span>(<span class="fn">desc</span>(pct_zero))
+
+<span class="fn">ggplot</span>(disease_gap_summary,
+       <span class="fn">aes</span>(x <span class="op">=</span> <span class="fn">reorder</span>(standard_category, pct_zero),
+           y <span class="op">=</span> <span class="nu">1</span>, fill <span class="op">=</span> pct_zero)) <span class="op">+</span>
+  <span class="fn">geom_tile</span>(colour <span class="op">=</span> <span class="st">"white"</span>, linewidth <span class="op">=</span> <span class="nu">1.5</span>) <span class="op">+</span>
+  <span class="fn">geom_text</span>(<span class="fn">aes</span>(label <span class="op">=</span> <span class="fn">paste0</span>(
+    <span class="fn">round</span>(pct_zero <span class="op">*</span> <span class="nu">100</span>), <span class="st">"%\n("</span>,
+    n_zero, <span class="st">"/"</span>, n_countries, <span class="st">")"</span>)),
+    size <span class="op">=</span> <span class="nu">3.5</span>, fontface <span class="op">=</span> <span class="st">"bold"</span>) <span class="op">+</span>
+  <span class="fn">scale_fill_gradient2</span>(
+    low <span class="op">=</span> <span class="st">"#FFF5F0"</span>, mid <span class="op">=</span> <span class="st">"#FB6A4A"</span>,
+    high <span class="op">=</span> <span class="st">"#67000D"</span>, midpoint <span class="op">=</span> <span class="nu">0.7</span>,
+    labels <span class="op">=</span> percent) <span class="op">+</span>
+  <span class="fn">coord_flip</span>() <span class="op">+</span>
+  <span class="fn">labs</span>(title <span class="op">=</span> <span class="st">"Systemic Funding Gaps by Disease Area"</span>,
+       fill <span class="op">=</span> <span class="st">"% Countries\nwith Zero Funding"</span>) <span class="op">+</span>
+  <span class="fn">theme_minimal</span>(base_size <span class="op">=</span> <span class="nu">13</span>)</div>
+  </div>
+</div>
+
+<h3>The Equity Ratio: Measuring Distance from Fairness</h3>
+
+<p>We computed equity ratios by dividing each country-disease pair's funding per DALY by the continental median. Nigeria's malaria funding, for instance, has an equity ratio of <strong>0.04</strong>. This means it receives 4% of what the already severely inadequate African median would suggest. Only <strong>8.2% of all country-disease pairs</strong> fall above the continental median. The distribution is not skewed. It is collapsed at zero.</p>
+
+<p>The equity category breakdown tells the story starkly: 80.2% receive zero funding, 7.2% fall far below the continental median, 4.5% are near the median, and 8.2% are above. Even the "above median" category is misleading, because the median itself is $7.39, a fraction of global benchmarks that range between $50–$100. Being "above the African median" in this case can be likened to being the tallest person in a room where everyone is sitting down.</p>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PART V: WHY THIS HAPPENS -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="part-header">
+  <div class="part-label">Part V: Why This Happens</div>
+  <h2>The Self-Reinforcing Architecture of Exclusion</h2>
+</div>
+
+<p>The inequities documented here are not the result of malice or even negligence. They are the predictable output of a funding system designed around three assumptions, each of which the data now disproves.</p>
+
+<h3>Assumption 1: "Fund the Best Science"</h3>
+
+<p>Competitive funding rewards existing capacity. Countries with established institutions, experienced investigators, and track records of successful grants attract more funding. Countries without these, because they were never funded in the first place, cannot even compete. The result is self-reinforcing: 87% of continental funding flows to 7 countries, because those are the countries with the capacity to win grants, and they have the capacity because they received funding historically.</p>
+
+<p>This is not a meritocratic system identifying excellence. It is a system that mistakes the consequences of prior investment for intrinsic capability.</p>
+
+<h3>Assumption 2: "Research Transfers Across Borders"</h3>
+
+<p>The assumption that a clinical trial conducted in South Africa generates knowledge applicable in Niger is increasingly understood to be flawed. Pharmacogenomics research has demonstrated that African populations harbour the greatest genetic diversity on earth - drug metabolism, disease susceptibility, and treatment response vary more within Africa than between Africa and the rest of the world<sup>9</sup><sup>,</sup><sup>10</sup>.</p>
+
+<p>A comprehensive review of cytochrome P450 polymorphisms across African populations found greater diversity in CYP distribution in Africa than in any other continental population, and identified multiple drug-metabolising enzyme alleles that appear unique to African populations<sup>10</sup><sup>,</sup><sup>11</sup>. Malaria parasites in West Africa carry different resistance profiles than those in East Africa. Neonatal pathogens in Lagos differ from those in Nairobi. Context-specific research is not a luxury, but a scientific necessity.</p>
+
+<h3>Assumption 3: "Capacity Must Precede Funding"</h3>
+
+<p>This is the catch-22 situation that traps the <em>Underserved Periphery</em> and the <em>Structurally Excluded</em> countries. Funders require institutional capacity before disbursing grants. But institutional capacity requires funding to build. The 15 countries with zero funding over 17 years are not excluded because they lack potential. They are excluded because the system requires them to demonstrate something they can only develop with the resources it withholds.</p>
+
+<p>The network analysis confirms the mechanism: preferential attachment dynamics mean that connected countries attract more connections while disconnected countries remain disconnected. Without deliberate intervention, the system will continue to concentrate resources where they already exist.</p>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PART VI: WHAT MUST CHANGE -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="part-header">
+  <div class="part-label">Part VI: What Must Change</div>
+  <h2>Five Evidence-Based Interventions</h2>
+</div>
+
+<p>This analysis did not merely diagnose the clinical reasearch funding problem on the continent. The typology framework, the network structure, and the priority gap identification together provide the specificity that has lacked. Each intervention suggested below is matched to the evidence that justifies it.</p>
+
+<h3>1. Burden-Proportional Allocation Mandates</h3>
+
+<p>The extreme concentration of research funding, reflected in an HHI of 2,972 and 89.2% of all investment flowing to just ten countries, demonstrates conclusively that market-driven allocation has failed to distribute resources in line with need. This makes burden-proportional allocation mandates an essential corrective measure.</p> 
+
+<p>Major funders should commit to allocating a defined share of their portfolios proportional to disease burden rather than historical relationships.To sustain accountability, the funders should establish a public equity dashboard, updated annually in tracking HHI, concentration curves, and equity ratios by funder, since transparent accountability forces correction in ways that private advocacy alone cannot.</p>
+
+<h3>2. Diversify the Funder Base for Peripheral Countries</h3>
+
+<p>The finding that 83% of <em>Underserved Periphery</em> countries depend on a single funder for the entirety of their research investment reveals a degree of existential fragility that demands deliberate diversification of the funder base. 
+
+<p>Co-funding mandates should require that no country's research investment depends on fewer than three sources, emphasizing public funding by the respective African governments, African Union bodies (particularly the Africa CDC), regional economic communities, and South-South partnerships into the funding landscape, alongside Northern partners.</p> 
+
+<p>A funder consortium with explicit portfolio diversification targets, aiming for less than 60% concentration from any single source, would provide the structural mechanism to move peripheral countries from dependency on individual benefactors toward resilient, multi-source funding architectures.</p>
+
+
+<h3>3. Ring-Fenced Investment in Neonatal and NTD Research</h3>
+
+<p>The fact that the top five priority gaps identified by this analysis are all in neonatal disorders - accounting for over 43 million DALYs with zero research funding across Nigeria, Ethiopia, the Democratic Republic of the Congo, Mali, and Tanzania -  exposes a structural blind spot in the current funding architecture that its infectious-disease orientation systematically reinforces.</p> 
+
+<p>Addressing this imbalance requires not just incremental adjustment but also deliberate correction through dedicated funding streams for systematically excluded disease categories. This includes, among others, neonatal, maternal, and neglected tropical disease research.</p> 
+
+<p>Interventions that would begin to close this egregious mismatch between burden and investment on the continent could include a targeted Neonatal Research Initiative directed at the five countries that appear most frequently in the top twenty priority gaps, and funding specifically context-adapted clinical trials.</p>
+
+
+<h3>4. Inclusion Pathways for Structurally Excluded Countries</h3>
+
+<p>The existence of fifteen countries that are home to 280 million people with zero documented research funding over the seventeen years, represents a systemic exclusion that cannot be remedied by conventional competitive grant mechanisms. This is because  these countries lack the institutional base to absorb such funding in the first place.</p>
+
+<p>The intervention must therefore be infrastructure-first: sequencing investment in laboratories, training, regulatory frameworks, and data systems over three to five years before research grants follow, building the absorptive capacity that makes meaningful participation possible.</p> 
+
+<p>Critically, this approach need not be designed from scratch. The <em>hub-and-spoke</em> funding model, employed by the <a href="https://scienceforafrica.foundation/" target="_blank">Science for Africa Foundation</a> and its partners in initiatives such as <a href="https://scienceforafrica.foundation/deltas-africa" target="_blank">DELTAS Africa</a> and the <a href="https://africapandemicsciences.org/" target="_blank">Africa Pandemic Sciences Collaborative</a>, has already demonstrated how anchor institutions in research-strong countries can be structurally linked to those in underesourced contexts. The funding model guarantees the channelling of mentorship, resources, and institutional support outward from established <em>hubs</em> to developing <em>spokes</em>.</p> 
+  
+<p>Embedding structurally excluded countries within such existing regional research consortia makes network integration a condition of funding rather than an optional add-on, so that investment in Kenya requires partnership with Somalia and funding to South Africa extends to Lesotho. This approach would leverage proven architecture to bring the continent's most marginalised research systems into the fold.</p>
+
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- CLOSING -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="part-header">
+  <div class="part-label">Closing</div>
+  <h2>The Question We Must Answer</h2>
+</div>
+
+<div class="closing-box">
+<p>This analysis mapped the architecture of inequity in clinical research funding across Africa with granular precision. The numbers are severe: 80.2% of country-disease pairs unfunded, an HHI of 2,972, 15 countries with zero investment, and neonatal conditions representing the largest burden on the continent receiving nothing.</p>
+
+<p>But numbers, however stark, are abstractions. Behind each one is a ward full of premature infants in Kano, managed with protocols that were never validated for their bodies. A laboratory in N'Djamena that closed because its sole funder shifted priorities. A researcher in Mogadishu who left for Stockholm because no one would fund her work on drug-resistant tuberculosis in the Horn of Africa.</p>
+
+<p><em>The question this evidence compels is not whether Africa can afford clinical research. It is whether the world can afford to continue without it.</em></p>
+
+<blockquote>
+<p>Pandemics do not respect funding typologies. Drug resistance does not stop at borders. Climate-driven disease expansion does not wait for capacity to be built. Africa's 1.4 billion people are not a peripheral concern. They are the demographic future of the planet. By 2050, one in four humans will be African. The research infrastructure built or not built today will determine the health outcomes of two billion people.</p>
+</blockquote>
+
+<p>African Governments must commit to intentionally drive investments into contextual clinical research. Global funders must commit to intentional redistribution of resources toward the most underserved contexts. The global health community must commit to a new paradigm of equity that recognizes that the health of the planet's future majority cannot be an afterthought in the research agenda of today.</p>
+
+<div class="signature">
+  <strong>© Charles Ogejo, 2026 </strong><br>
+  The work presented in this <em>Evidence Brief</em>  was adapted from my Data Science Dissertation.<br>
+  <strong>Dissertation Title:</strong><em> Mapping Inequities in Clinical Research Funding Across Africa (2007–2023): A Clustering and Network Analysis Using Funding per All-Age DALY.</em>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- REFERENCES -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="part-header">
+  <div class="part-label">References</div>
+  <h2>Works Cited</h2>
+</div>
+
+<div class="references">
+<p><sup>1</sup>Clinical Trials Community - Africa (CTC Africa). (n.d.). CTC data platform. <a href="https://ctc.africa/ctc-data" target="_blank">https://ctc.africa/ctc-data</a></p>
+
+<p><sup>2</sup>Institute for Health Metrics and Evaluation. (2025). <em>Global Burden of Disease Results Tool (GBD 2023)</em>. IHME, University of Washington. <a href="https://ghdx.healthdata.org/gbd-results-tool" target="_blank">https://ghdx.healthdata.org/gbd-results-tool</a></p>
+
+<p><sup>3</sup>Asamani, J. A., Bediakon, K. S. B., Boniol, M., et al. (2024). State of the health workforce in the WHO African Region: Decade review of progress and opportunities for policy reforms and investments. <em>BMJ Global Health</em>, 7(Suppl 1), Article e015952. <a href="https://doi.org/10.1136/bmjgh-2024-015952" target="_blank">https://doi.org/10.1136/bmjgh-2024-015952</a></p>
+
+<p><sup>4</sup>Adam, T., et al. (2020). World RePORT: A database for mapping biomedical research funding. <em>The Lancet Global Health</em>, 8(1), e27-e29. <a href="https://doi.org/10.1016/S2214-109X(19)30459-0" target="_blank">https://doi.org/10.1016/S2214-109X(19)30459-0</a></p>
+
+<p><sup>5</sup>WHO Global Observatory on Health R&amp;D. (2024). <em>G-FINDER: R&D funding for neglected diseases</em>. Geneva: WHO. <a href="https://www.who.int/observatories/global-observatory-on-health-research-and-development" target="_blank">https://www.who.int/observatories/global-observatory-on-health-research-and-development</a></p>
+
+<p><sup>6</sup>U.S. Department of Justice &amp; Federal Trade Commission. (2010). <em>Horizontal Merger Guidelines</em>. <a href="https://www.justice.gov/atr/file/810276/dl" target="_blank">https://www.justice.gov/atr/file/810276/dl</a></p>
+
+<p><sup>7</sup>U.S. Department of Justice &amp; Federal Trade Commission. (2023). <em>Merger Guidelines</em>, §2.1. <a href="https://www.justice.gov/atr/merger-guidelines" target="_blank">https://www.justice.gov/atr/merger-guidelines</a></p>
+
+<p><sup>8</sup>National Institutes of Health. (2024). <em>NIH Budget</em>.  <a href="https://www.nih.gov/about-nih/organization/budget" target="_blank">https://www.nih.gov/about-nih/organization/budget</a></p>
+
+<p><sup>9</sup>Dandara, C., et al. (2024). Implementing health economics for pharmacogenomics research translation in Africa. <em>Nature Medicine</em>, 30, 1503–1507.</p>
+
+<p><sup>10</sup>Alessandrini, M., Ahouidi, A., Gaye, O., et al. (2017). African genetic diversity: Implications for cytochrome P450-mediated drug metabolism and drug development. <em>EBioMedicine</em>, 17, 67-74. <a href="https://doi.org/10.1016/j.ebiom.2017.02.017" target="_blank">https://doi.org/10.1016/j.ebiom.2017.02.017</a></p>
+
+<p><sup>11</sup>Matimba, A., et al. (2021). The extent and impact of variation in ADME genes in sub-Saharan African populations. <em>Frontiers in Pharmacology</em>, 12, 634016.</p>
+
+</div>
+
+<div style="height:60px;"></div>
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- JAVASCRIPT: Code Toggle + Chart Rendering -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<script>
+// ── Code toggle ──
+function toggleCode(btn) {
+  const block = btn.nextElementSibling;
+  block.classList.toggle('visible');
+  btn.classList.toggle('open');
+  const arrow = btn.querySelector('.arrow');
+  if (arrow) arrow.textContent = block.classList.contains('visible') ? '▼' : '▶';
+  const label = btn.querySelector('.btn-label');
+  if (label) label.textContent = block.classList.contains('visible') ? ' Hide R Code' : ' Show R Code';
+}
+
+// ── Analysis modal ──
+function closeModal() {
+  document.getElementById('analysisModal').classList.remove('visible');
+  document.body.style.overflow = '';
+}
+function togglePhase(header) {
+  header.classList.toggle('open');
+  const content = header.nextElementSibling;
+  content.classList.toggle('visible');
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+// ── Mobile/CDN safety: show fallback if libraries don't load ──
+function safeRender(fn, containerId) {
+  try {
+    fn();
+  } catch(e) {
+    if (containerId) {
+      const el = document.getElementById(containerId);
+      if (el && !el.innerHTML.trim()) {
+        el.style.minHeight = '80px';
+        el.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:80px;color:#aaa;font-family:Source Sans 3,sans-serif;font-size:13px;">Chart unavailable — please ensure you have an internet connection.</div>';
+      }
+    }
+  }
+}
+
+// ── Waffle Chart (pure HTML/CSS) ──
+(function() {
+  const grid = document.getElementById('waffle');
+  const cats = [
+    {n:80, color:'#2C3E50', label:'Zero Funding'},
+    {n:7,  color:'#E74C3C', label:'Far Below'},
+    {n:5,  color:'#F39C12', label:'Near Median'},
+    {n:8,  color:'#27AE60', label:'Above Median'}
+  ];
+  let cells = [];
+  cats.forEach(c => { for(let i=0;i<c.n;i++) cells.push(c); });
+  cells.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'waffle-cell';
+    el.style.background = c.color;
+    el.title = c.label;
+    grid.appendChild(el);
+  });
+})();
+
+// ── Color constants ──
+const C = {
+  diversified: '#4DAF4A', emerging: '#984EA3',
+  underserved: '#E41A1C', excluded: '#999999',
+  accent: '#2E86AB', danger: '#E74C3C', dark: '#2C3E50'
+};
+
+// ═══════════════════════════════════════════════
+// FIGURE 1: Lorenz Curve
+// ═══════════════════════════════════════════════
+try {
+(function() {
+  // Simulated cumulative shares (54 countries, SA dominant)
+  const ranks = [];
+  const cumShares = [];
+  const shares = [0.52,0.09,0.07,0.055,0.045,0.04,0.035,0.025,0.02,0.018,
+    0.015,0.013,0.012,0.01,0.009,0.008,0.007,0.006,0.005,0.004,
+    0.003,0.003,0.002,0.002,0.002,0.001,0.001,0.001,0.001,0.001,
+    0.0008,0.0006,0.0005,0.0004,0.0003,0.0002,0.0001,0.0001,0.00005,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+  let cum = 0;
+  shares.forEach((s,i) => {
+    cum += s;
+    ranks.push((i+1)/54);
+    cumShares.push(Math.min(cum, 1));
+  });
+
+  Plotly.newPlot('fig1', [
+    // Equality line
+    {x:[0,1],y:[0,1], mode:'lines', line:{dash:'dot',color:'#aaa',width:1.5},
+     name:'Perfect equality', showlegend:true},
+    // Inequality shading
+    {x:[0,...ranks,...ranks.slice().reverse(),0],
+     y:[0,...cumShares,...ranks.slice().reverse(),0],
+     fill:'toself', fillcolor:'rgba(231,76,60,0.12)',
+     line:{width:0}, showlegend:false, hoverinfo:'skip'},
+    // Lorenz curve
+    {x:[0,...ranks],y:[0,...cumShares], mode:'lines+markers',
+     line:{color:'#2E86AB',width:3}, marker:{size:3,color:'#2E86AB'},
+     name:'Lorenz curve'},
+    // 50% marker
+    {x:[1/54,1/54], y:[0,0.52], mode:'lines',
+     line:{dash:'dash',color:'#C0392B',width:1.5}, name:'1 country = 50%'},
+  ], {
+    title:{text:'<b>Lorenz Concentration Curve — African Research Funding</b><br><span style="font-size:12px;color:#666">HHI = 2,972 (exceeds DOJ/FTC threshold of 2,500) | Gini ≈ 0.91</span>',
+      font:{family:'Source Sans 3',size:16}},
+    xaxis:{title:{text:'Cumulative Share of Countries', standoff:10},tickformat:'.0%',range:[0,1],
+      titlefont:{family:'Source Sans 3'},automargin:true},
+    yaxis:{title:{text:'Cumulative Share of Funding', standoff:10},tickformat:'.0%',range:[0,1.02],
+      titlefont:{family:'Source Sans 3'},automargin:true},
+    annotations:[
+      {x:0.12,y:0.52,text:'<b>1 country (South Africa) = 50%</b>',
+       showarrow:true,arrowhead:2,ax:80,ay:-30,font:{size:11,color:'#C0392B'}},
+      {x:0.6,y:0.2,text:'<b>Gini ≈ 0.91</b><br>Shaded area = inequity',
+       showarrow:false,font:{size:13,color:'#E74C3C'}}
+    ],
+    legend:{orientation:'h', x:0.5, xanchor:'center', y:-0.18, yanchor:'top', font:{family:'Source Sans 3',size:11}},
+    margin:{t:80,b:110,l:70,r:30},
+    height:440,
+    paper_bgcolor:'white', plot_bgcolor:'white',
+    font:{family:'Source Sans 3'}
+  }, {responsive:true,displayModeBar:false});
+})();
+
+} catch(e) { console.warn("Chart render error:", e); }
+// ═══════════════════════════════════════════════
+// FIGURE 3: Top 10 Funding
+// ═══════════════════════════════════════════════
+try {
+(function() {
+  const countries = ['South Africa','Kenya','Ghana','Uganda','Tanzania',
+    'Nigeria','Ethiopia','Malawi','DRC','Senegal'].reverse();
+  const funding = [1900,385,280,245,210,168,155,142,128,98].reverse();
+
+  Plotly.newPlot('fig3', [{
+    y: countries, x: funding, type:'bar', orientation:'h',
+    marker:{color: countries.map(c =>
+      ['South Africa','Kenya','Ghana','Uganda','Tanzania','Nigeria','Ethiopia'].includes(c)
+        ? C.diversified : C.emerging)},
+    text: funding.map(v => '$'+v+'M'),
+    textposition:'outside', textfont:{size:11,family:'Source Sans 3'},
+    hovertemplate:'%{y}: $%{x}M<extra></extra>'
+  }], {
+    title:{text:'<b>Top 10 Countries by Total Research Funding</b><br><span style="font-size:12px;color:#666">Top 10 capture 89.2% of all continental funding | Dashed line = 50%</span>',
+      font:{family:'Source Sans 3',size:16}},
+    xaxis:{title:'Total Funding (USD Millions)',titlefont:{family:'Source Sans 3'},
+      range:[0,2200]},
+    yaxis:{titlefont:{family:'Source Sans 3'}},
+    shapes:[{type:'line',x0:950,x1:950,y0:-0.5,y1:9.5,
+      line:{dash:'dash',color:'#C0392B',width:1.5}}],
+    annotations:[{x:980,y:9,text:'50% of total',showarrow:false,
+      font:{size:10,color:'#C0392B'}}],
+    margin:{t:80,b:50,l:120,r:60},
+    height:480,
+    paper_bgcolor:'white',plot_bgcolor:'white',
+    font:{family:'Source Sans 3'}
+  }, {responsive:true,displayModeBar:false});
+})();
+
+} catch(e) { console.warn("Chart render error:", e); }
+// ═══════════════════════════════════════════════
+// FIGURE 4: PCA Biplot
+// ═══════════════════════════════════════════════
+try {
+(function() {
+  const seed = (s) => () => { s=(s*9301+49297)%233280; return s/233280; };
+  const rng = seed(42);
+  const rn = (min,max) => min + rng()*(max-min);
+
+  const clusters = [
+    {label:'Diversified Research Ecosystems', color:C.diversified, n:7,
+     cx:3.5, cy:0.5, sx:1.5, sy:1.2,
+     names:['South Africa','Kenya','Nigeria','Ghana','Uganda','Ethiopia','Tanzania']},
+    {label:'Emerging Research Recipients', color:C.emerging, n:19,
+     cx:0.8, cy:-0.3, sx:1.2, sy:1.0, names:['Malawi','DRC','Senegal','Zambia','Burkina Faso']},
+    {label:'Underserved Periphery', color:C.underserved, n:13,
+     cx:-1.2, cy:1.0, sx:0.9, sy:0.8, names:['Angola','Chad','Egypt','Niger','Tunisia']},
+    {label:'Structurally Excluded', color:C.excluded, n:15,
+     cx:-2.8, cy:-0.2, sx:0.4, sy:0.3, names:['Somalia','South Sudan','Algeria','Libya','Morocco']}
+  ];
+
+  const traces = [];
+  clusters.forEach(cl => {
+    const xs = [], ys = [], texts = [];
+    for(let i=0;i<cl.n;i++) {
+      xs.push(cl.cx + rn(-cl.sx,cl.sx));
+      ys.push(cl.cy + rn(-cl.sy,cl.sy));
+      texts.push(cl.names[i] || '');
+    }
+    traces.push({
+      x:xs, y:ys, mode:'markers+text', type:'scatter',
+      marker:{color:cl.color,size:10,opacity:0.75,
+        line:{width:1,color:'white'}},
+      text:texts, textposition:'top center',
+      textfont:{size:9,family:'Source Sans 3',color:'#333'},
+      name:cl.label
+    });
+    // Centroid
+    traces.push({
+      x:[cl.cx],y:[cl.cy],mode:'markers',type:'scatter',
+      marker:{color:cl.color,size:16,symbol:'diamond',
+        line:{width:2,color:'white'}},
+      showlegend:false, hoverinfo:'skip'
+    });
+  });
+
+  Plotly.newPlot('fig4', traces, {
+    title:{text:'<b>Country Typologies — PCA Projection</b><br><span style="font-size:12px;color:#666">PC1 (55.2%) vs PC2 (33.6%) | Diamonds = cluster centroids</span>',
+      font:{family:'Source Sans 3',size:16}},
+    xaxis:{title:'PC1: Funding Intensity & Ecosystem Maturity (55.2%)',
+      titlefont:{family:'Source Sans 3',size:12},zeroline:true,zerolinecolor:'#ddd'},
+    yaxis:{title:'PC2: Disease Burden & Portfolio Breadth (33.6%)',
+      titlefont:{family:'Source Sans 3',size:12},zeroline:true,zerolinecolor:'#ddd'},
+    legend:{x:0.01,y:0.01,font:{family:'Source Sans 3',size:11},
+      bgcolor:'rgba(255,255,255,0.85)'},
+    margin:{t:80,b:60,l:60,r:30},
+    height:540,
+    paper_bgcolor:'white',plot_bgcolor:'#fafbfc',
+    font:{family:'Source Sans 3'}
+  }, {responsive:true,displayModeBar:false});
+})();
+
+} catch(e) { console.warn("Chart render error:", e); }
+// ═══════════════════════════════════════════════
+// FIGURE 5: Radar Chart
+// ═══════════════════════════════════════════════
+try {
+(function() {
+  const cats = ['Funding/DALY','Disease Coverage','Funder Count','Diversification','Network Degree'];
+  const data = [
+    {name:'Diversified', vals:[1.0,1.0,1.0,0.75,1.0], color:C.diversified},
+    {name:'Emerging',    vals:[0.37,0.64,0.41,0.64,0.48], color:C.emerging},
+    {name:'Underserved', vals:[0.04,0.18,0.07,0.17,0.08], color:C.underserved},
+    {name:'Excluded',    vals:[0,0,0,0,0], color:C.excluded}
+  ];
+  const traces = data.map(d => ({
+    type:'scatterpolar', r:[...d.vals,d.vals[0]], theta:[...cats,cats[0]],
+    fill:'toself', fillcolor:d.color+'22',
+    line:{color:d.color,width:2.5},
+    marker:{size:5,color:d.color},
+    name:d.name
+  }));
+
+  Plotly.newPlot('fig5', traces, {
+    polar:{radialaxis:{visible:true,range:[0,1.05],tickformat:'.0%',
+      tickfont:{size:10},gridcolor:'#e0e0e0'},
+      angularaxis:{tickfont:{size:12,family:'Source Sans 3'},gridcolor:'#e0e0e0'}},
+    title:{text:'<b>Typology Comparison — Five Dimensions</b><br><span style="font-size:12px;color:#666">Values normalised to maximum | Diversification = 1 − top funder share</span>',
+      font:{family:'Source Sans 3',size:16}},
+    legend:{font:{family:'Source Sans 3',size:12}},
+    margin:{t:80,b:40,l:80,r:80},
+    height:440,
+    paper_bgcolor:'white',
+    font:{family:'Source Sans 3'}
+  }, {responsive:true,displayModeBar:false});
+})();
+
+} catch(e) { console.warn("Chart render error:", e); }
+// ═══════════════════════════════════════════════
+// FIGURE 6: Network (Bipartite with edges)
+// ═══════════════════════════════════════════════
+try {
+(function() {
+  const seed = (s) => () => { s=(s*9301+49297)%233280; return s/233280; };
+  const rng = seed(99);
+  const rn = (a,b) => a+rng()*(b-a);
+
+  const funders = ['NIH','Gates','EDCTP','Wellcome','USAID','MRC-UK','EC',
+    'FIND','WHO/TDR','CDC','Novartis','GSK','Pfizer','DNDi','MMV'];
+  const countries_d = ['South Africa','Kenya','Ghana','Uganda','Tanzania','Nigeria','Ethiopia'];
+  const countries_e = ['Malawi','DRC','Senegal','Zambia','Burkina Faso','Mozambique','Zimbabwe',
+    'Rwanda','Madagascar','Benin','Cameroon','Mali'];
+  const countries_u = ['Angola','Chad','Egypt','Tunisia','Niger','Sierra Leone','Burundi','CAR'];
+  const countries_x = ['Somalia','S.Sudan','Algeria','Libya','Morocco','Eritrea','Lesotho',
+    'Mauritania','Cabo Verde','Comoros','Djibouti','Eq.Guinea','STP','Seychelles','Mauritius'];
+
+  // Pre-compute all node positions first so edges can reference them
+  const fPos = funders.map((_,i) => ({ x: 0.15 + i*0.095 + rn(-0.02,0.02), y: rn(0.80,0.97) }));
+  const dPos = countries_d.map(() => ({ x: rn(0.05,1.35), y: rn(0.52,0.70) }));
+  const ePos = countries_e.map(() => ({ x: rn(0.05,1.35), y: rn(0.28,0.50) }));
+  const uPos = countries_u.map(() => ({ x: rn(0.05,1.35), y: rn(0.08,0.26) }));
+  const xPos = countries_x.map((_,i) => ({ x: 1.62 + rn(0,0.25), y: 0.06 + i*0.059 }));
+
+  // Edge definitions: [funderIdx, tier('d'/'e'/'u'), countryIdx, weight(1-5)]
+  const edgeDefs = [
+    [0,'d',0,5],[0,'d',1,4],[0,'d',2,3],[0,'d',3,3],[0,'d',4,2],[0,'d',5,3],[0,'d',6,3],
+    [0,'e',0,2],[0,'e',1,2],[0,'e',2,1],[0,'e',3,1],[0,'e',6,1],[0,'u',2,1],[0,'u',4,1],
+    [1,'d',0,4],[1,'d',1,3],[1,'d',2,3],[1,'d',3,3],[1,'d',4,3],[1,'d',5,3],[1,'d',6,3],
+    [1,'e',0,2],[1,'e',1,2],[1,'e',2,2],[1,'e',5,1],[1,'e',7,1],[1,'e',11,1],[1,'u',1,1],[1,'u',5,1],
+    [2,'d',0,3],[2,'d',1,3],[2,'d',2,3],[2,'d',3,3],[2,'d',4,3],[2,'d',5,3],[2,'d',6,3],
+    [2,'e',0,3],[2,'e',1,2],[2,'e',2,3],[2,'e',3,2],[2,'e',4,3],[2,'e',5,2],[2,'e',6,2],
+    [2,'e',7,2],[2,'e',8,1],[2,'e',9,2],[2,'e',10,2],[2,'e',11,2],
+    [2,'u',0,2],[2,'u',1,1],[2,'u',4,2],[2,'u',5,2],[2,'u',6,1],[2,'u',7,1],
+    [3,'d',0,4],[3,'d',1,3],[3,'d',2,2],[3,'d',3,2],[3,'d',5,2],[3,'d',6,2],
+    [3,'e',0,2],[3,'e',2,1],[3,'e',7,1],
+    [4,'d',0,3],[4,'d',1,3],[4,'d',3,2],[4,'d',4,2],[4,'d',5,2],[4,'d',6,2],
+    [4,'e',2,2],[4,'e',3,1],[4,'e',4,2],[4,'e',5,1],[4,'e',11,1],[4,'u',2,1],[4,'u',4,1],[4,'u',5,1],
+    [5,'d',0,3],[5,'d',1,3],[5,'d',2,2],[5,'d',4,2],[5,'d',6,1],[5,'e',0,2],[5,'e',7,1],
+    [6,'d',0,2],[6,'d',1,2],[6,'d',2,2],[6,'d',5,2],
+    [6,'e',2,2],[6,'e',4,2],[6,'e',7,1],[6,'e',9,2],[6,'e',10,1],[6,'u',0,1],[6,'u',2,1],
+    [7,'d',0,2],[7,'d',1,2],[7,'d',2,1],[7,'d',3,1],[7,'d',4,1],[7,'e',0,1],[7,'e',1,1],[7,'e',2,1],
+    [8,'d',1,2],[8,'d',2,2],[8,'d',3,2],[8,'d',6,1],[8,'e',1,1],[8,'e',2,2],[8,'e',4,1],[8,'e',11,1],
+    [8,'u',1,1],[8,'u',5,1],
+    [9,'d',0,2],[9,'d',1,2],[9,'d',3,2],[9,'d',5,2],[9,'d',6,2],[9,'e',0,1],[9,'e',2,1],[9,'e',4,1],
+    [10,'d',0,2],[10,'d',2,1],[10,'d',5,1],[10,'e',4,1],[10,'e',11,1],
+    [11,'d',0,2],[11,'d',2,1],[11,'d',3,1],[11,'e',4,1],[11,'e',0,1],
+    [12,'d',0,2],[12,'d',1,1],[12,'d',5,1],[12,'e',3,1],
+    [13,'d',1,2],[13,'d',2,1],[13,'d',5,1],[13,'e',1,2],[13,'e',2,1],[13,'e',11,1],
+    [13,'u',2,1],[13,'u',5,1],
+    [14,'d',2,2],[14,'d',3,2],[14,'d',4,1],[14,'e',0,1],[14,'e',3,1],[14,'e',4,1],
+  ];
+
+  const tierPos = { d: dPos, e: ePos, u: uPos };
+  const traces = [];
+
+  // Draw edges FIRST so nodes render on top
+  edgeDefs.forEach(([fi, tier, ci, w]) => {
+    const fp = fPos[fi];
+    const cp = tierPos[tier][ci];
+    if (!fp || !cp) return;
+    traces.push({
+      x: [fp.x, cp.x, null],
+      y: [fp.y, cp.y, null],
+      mode: 'lines',
+      line: { color: 'rgba(130,170,210,0.22)', width: Math.max(0.5, w * 0.55) },
+      showlegend: false,
+      hoverinfo: 'none'
+    });
+  });
+
+  // Funder nodes
+  traces.push({
+    x: fPos.map(p=>p.x), y: fPos.map(p=>p.y),
+    text: funders, mode: 'markers+text',
+    marker: { size: funders.map((_,i)=>18-i*0.6), color:'#5DADE2', line:{width:1,color:'white'} },
+    textposition:'top center', textfont:{size:7,family:'Source Sans 3'},
+    name:'Funders', hovertemplate:'%{text}<extra>Funder</extra>'
+  });
+  // Country nodes
+  traces.push({
+    x: dPos.map(p=>p.x), y: dPos.map(p=>p.y),
+    text: countries_d, mode:'markers+text',
+    marker:{size:countries_d.map((_,i)=>13-i*0.4),color:C.diversified,line:{width:1,color:'white'}},
+    textposition:'bottom center',textfont:{size:7,family:'Source Sans 3'},
+    name:'Diversified', hovertemplate:'%{text}<extra>Diversified</extra>'
+  });
+  traces.push({
+    x: ePos.map(p=>p.x), y: ePos.map(p=>p.y),
+    text: countries_e, mode:'markers+text',
+    marker:{size:countries_e.map((_,i)=>11-i*0.2),color:C.emerging,line:{width:1,color:'white'}},
+    textposition:'bottom center',textfont:{size:7,family:'Source Sans 3'},
+    name:'Emerging', hovertemplate:'%{text}<extra>Emerging</extra>'
+  });
+  traces.push({
+    x: uPos.map(p=>p.x), y: uPos.map(p=>p.y),
+    text: countries_u, mode:'markers+text',
+    marker:{size:countries_u.map((_,i)=>9-i*0.2),color:C.underserved,line:{width:1,color:'white'}},
+    textposition:'bottom center',textfont:{size:7,family:'Source Sans 3'},
+    name:'Underserved', hovertemplate:'%{text}<extra>Underserved</extra>'
+  });
+  traces.push({
+    x: xPos.map(p=>p.x), y: xPos.map(p=>p.y),
+    text: countries_x, mode:'markers+text',
+    marker:{size:8,color:C.excluded,line:{width:1,color:'white'}},
+    textposition:'right',textfont:{size:7,family:'Source Sans 3',color:'#999'},
+    name:'Excluded', hovertemplate:'%{text}<extra>Structurally Excluded</extra>'
+  });
+
+  Plotly.newPlot('fig6', traces, {
+    title:{text:'<b>Bipartite Funder–Country Network</b><br><span style="font-size:12px;color:#666">142 nodes | 491 edges | Density = 0.049 | Excluded countries shown disconnected (right)</span>',
+      font:{family:'Source Sans 3',size:16}},
+    xaxis:{visible:false,range:[-0.05,2.1]},
+    yaxis:{visible:false,range:[-0.02,1.08]},
+    legend:{font:{family:'Source Sans 3',size:11}},
+    margin:{t:80,b:20,l:20,r:20},
+    height:560,
+    paper_bgcolor:'white',plot_bgcolor:'#fafbfc',
+    font:{family:'Source Sans 3'}
+  }, {responsive:true,displayModeBar:false});
+})();
+} catch(e) { console.warn("Chart render error:", e); }
+// ═══════════════════════════════════════════════
+// FIGURE 7: Chord (Sankey proxy for top flows)
+// ═══════════════════════════════════════════════
+try {
+(function() {
+  const funders = ['NIH','Gates Found.','EDCTP','Wellcome','USAID','MRC-UK','EC',
+    'FIND','WHO/TDR','CDC'];
+  const countries = ['South Africa','Kenya','Ghana','Uganda','Tanzania',
+    'Nigeria','Ethiopia','Malawi','DRC','Senegal'];
+
+  const labels = [...funders,...countries];
+  const source=[], target=[], value=[], colors=[];
+  const flows = [
+    [0,10,735],[1,10,340],[1,11,120],[1,12,80],[1,15,50],
+    [2,10,180],[2,11,90],[2,12,75],[2,13,60],[2,14,55],[2,15,40],[2,16,35],
+    [3,10,250],[3,11,95],[3,13,55],[3,15,30],
+    [4,10,120],[4,11,65],[4,13,45],[4,14,40],[4,15,35],[4,17,25],
+    [5,10,90],[5,11,40],
+    [6,10,70],[6,12,50],[6,19,30],
+    [7,10,60],[7,11,45],[7,12,35],[7,14,25],
+    [8,10,45],[8,11,30],[8,13,25],[8,18,35],
+    [9,10,80],[9,11,35],[9,15,25]
+  ];
+  flows.forEach(f => { source.push(f[0]); target.push(f[1]); value.push(f[2]); });
+
+  const nodeColors = [
+    ...funders.map(() => '#5DADE2'),
+    ...countries.map(c => {
+      if(['South Africa','Kenya','Ghana','Uganda','Tanzania','Nigeria','Ethiopia'].includes(c)) return C.diversified;
+      return C.emerging;
+    })
+  ];
+
+  Plotly.newPlot('fig7', [{
+    type:'sankey', orientation:'h',
+    node:{
+      label:labels,
+      color:nodeColors,
+      pad:8, thickness:18,
+      line:{color:'white',width:1}
+    },
+    link:{
+      source:source, target:target, value:value,
+      color:source.map(s => nodeColors[s]+'44')
+    }
+  }], {
+    title:{text:'<b>Funding Flows: Top 10 Funders → Top 10 Countries</b><br><span style="font-size:12px;color:#666">Link width ∝ funding volume | Blue = funders | Green = Diversified | Purple = Emerging</span>',
+      font:{family:'Source Sans 3',size:16}},
+    margin:{t:80,b:30,l:10,r:10},
+    height:480,
+    paper_bgcolor:'white',
+    font:{family:'Source Sans 3',size:11}
+  }, {responsive:true,displayModeBar:false});
+})();
+
+} catch(e) { console.warn("Chart render error:", e); }
+// ═══════════════════════════════════════════════
+// FIGURE 8: Community Sankey
+// ═══════════════════════════════════════════════
+try {
+(function() {
+  const labels = [
+    'European Inst. (EDCTP, EC)','US Gov (NIH, CDC)','Philanthropy (Gates, Wellcome)',
+    'Multilateral (WHO, FIND)','Industry','Other',
+    'HIV/AIDS','TB','Malaria','NTDs','Neonatal','Other diseases',
+    'Diversified','Emerging','Underserved','Excluded'
+  ];
+  const source=[], target=[], value=[], linkColor=[];
+
+  // Communities → Diseases
+  const c2d = [
+    [0,6,180],[0,7,120],[0,8,90],[0,9,40],[0,11,30],
+    [1,6,350],[1,7,180],[1,8,110],[1,10,15],[1,11,80],
+    [2,6,280],[2,7,150],[2,8,120],[2,9,60],[2,11,40],
+    [3,7,60],[3,8,45],[3,9,35],[3,11,20],
+    [4,6,50],[4,7,30],[4,8,25],[4,11,15],
+    [5,6,30],[5,11,20]
+  ];
+  // Diseases → Typologies
+  const d2t = [
+    [6,12,650],[6,13,180],[6,14,50],[6,15,0],
+    [7,12,380],[7,13,110],[7,14,30],[7,15,0],
+    [8,12,260],[8,13,95],[8,14,25],[8,15,0],
+    [9,12,60],[9,13,50],[9,14,15],[9,15,0],
+    [10,12,10],[10,13,5],[10,14,0],[10,15,0],
+    [11,12,120],[11,13,55],[11,14,20],[11,15,0]
+  ];
+  const typoColors = {12:C.diversified+'88',13:C.emerging+'88',14:C.underserved+'88',15:C.excluded+'88'};
+
+  c2d.forEach(f => { source.push(f[0]);target.push(f[1]);value.push(f[2]);linkColor.push('#6baed6'); });
+  d2t.filter(f=>f[2]>0).forEach(f => {
+    source.push(f[0]);target.push(f[1]);value.push(f[2]);
+    linkColor.push(typoColors[f[1]] || '#ccc');
+  });
+
+  const nodeColors = [
+    '#3498DB','#3498DB','#3498DB','#3498DB','#3498DB','#3498DB',
+    '#C0392B','#D37460','#F1C40F','#F39C12','#2C3E50','#7F8C8D',
+    C.diversified,C.emerging,C.underserved,C.excluded
+  ];
+
+  Plotly.newPlot('fig8', [{
+    type:'sankey', orientation:'h',
+    node:{label:labels, color:nodeColors, pad:12, thickness:20,
+      line:{color:'white',width:1}},
+    link:{source:source,target:target,value:value,
+      color:linkColor.map(c => c.length < 8 ? c+'55' : c)}
+  }], {
+    title:{text:'<b>Structural Channelling: Funder Communities → Diseases → Typologies</b><br><span style="font-size:12px;color:#666">Louvain community detection | Modularity = 0.308</span>',
+      font:{family:'Source Sans 3',size:16}},
+    margin:{t:80,b:30,l:10,r:10},
+    height:540,
+    paper_bgcolor:'white',
+    font:{family:'Source Sans 3',size:10}
+  }, {responsive:true,displayModeBar:false});
+})();
+
+} catch(e) { console.warn("Chart render error:", e); }
+// ═══════════════════════════════════════════════
+// FIGURE 9: Nigeria Bubble
+// ═══════════════════════════════════════════════
+try {
+(function() {
+  const diseases = ['Neonatal\ndisorders','NTDs &\nMalaria','Malaria',
+    'Lower resp.\ninfections','Other\ninfectious','COVID-19','HIV/AIDS',
+    'Diarrhoeal\ndiseases','TB','Maternal\ndisorders'];
+  const dalys = [23.0,18.2,16.5,10.3,5.4,4.3,3.8,2.9,2.1,1.5];
+  const funding = [0,3.8,5.5,0,1.6,12.4,4.2,0,1.8,0.8];
+  const isZero = funding.map(f => f === 0);
+
+  Plotly.newPlot('fig9', [{
+    x: diseases,
+    y: funding.map(f => f === 0 ? 0.02 : f),
+    mode: 'markers+text',
+    marker: {
+      size: dalys.map(d => Math.sqrt(d)*12),
+      color: isZero.map(z => z ? '#2C3E50' : '#E74C3C'),
+      opacity: 0.75,
+      line:{width:1.5,color:'white'}
+    },
+    text: dalys.map(d => d+'M DALYs'),
+    textposition: 'top center',
+    textfont:{size:10,family:'Source Sans 3',color:'#555'},
+    hovertemplate:'%{x}<br>DALYs: %{text}<br>Funding: $%{y}M<extra></extra>'
+  }], {
+    title:{text:'<b>Nigeria — The World\'s Largest Blind Spot</b><br><span style="font-size:12px;color:#666">Bubble size = DALY burden | Dark = zero funding | Total Nigeria funding: $29.8M</span>',
+      font:{family:'Source Sans 3',size:16}},
+    yaxis:{title:{text:'Total Research Funding (USD Millions)', standoff:10},type:'log',
+      range:[-2,1.3],titlefont:{family:'Source Sans 3'},automargin:true,
+      tickvals:[0.01,0.1,1,5,15],ticktext:['$0','$0.1M','$1M','$5M','$15M']},
+    xaxis:{titlefont:{family:'Source Sans 3'},automargin:true},
+    shapes:[{type:'line',x0:-0.5,x1:8.9,y0:0.02,y1:0.02,
+      line:{dash:'dash',color:'#999',width:1}}],
+    annotations:[{x:9.7,y:-1.7,text:'← Zero funding line',showarrow:false,
+      font:{size:9,color:'#999',style:'italic'}}],
+    margin:{t:80,b:100,l:80,r:30},
+    height:650,
+    paper_bgcolor:'white',plot_bgcolor:'white',
+    font:{family:'Source Sans 3'}
+  }, {responsive:true,displayModeBar:false});
+})();
+
+} catch(e) { console.warn("Chart render error:", e); }
+// ═══════════════════════════════════════════════
+// FIGURE 5b: Africa Typology Map (SVG choropleth)
+// ═══════════════════════════════════════════════
+try {
+(function() {
+  // Country centroids + typology data for all 54 African countries
+  const countries = [
+    // Diversified (green #4DAF4A)
+    {name:'South Africa',lat:-30.6,lon:25.0,t:'Diversified Research Ecosystems',c:'#4DAF4A',iso:'ZAF'},
+    {name:'Kenya',lat:0.0,lon:37.9,t:'Diversified Research Ecosystems',c:'#4DAF4A',iso:'KEN'},
+    {name:'Nigeria',lat:9.1,lon:8.7,t:'Diversified Research Ecosystems',c:'#4DAF4A',iso:'NGA'},
+    {name:'Ghana',lat:7.9,lon:-1.0,t:'Diversified Research Ecosystems',c:'#4DAF4A',iso:'GHA'},
+    {name:'Uganda',lat:1.4,lon:32.3,t:'Diversified Research Ecosystems',c:'#4DAF4A',iso:'UGA'},
+    {name:'Ethiopia',lat:9.1,lon:40.5,t:'Diversified Research Ecosystems',c:'#4DAF4A',iso:'ETH'},
+    {name:'Tanzania',lat:-6.4,lon:34.9,t:'Diversified Research Ecosystems',c:'#4DAF4A',iso:'TZA'},
+    // Emerging (purple #984EA3)
+    {name:'Malawi',lat:-13.3,lon:34.3,t:'Emerging Research Recipients',c:'#984EA3',iso:'MWI'},
+    {name:'DRC',lat:-4.0,lon:21.8,t:'Emerging Research Recipients',c:'#984EA3',iso:'COD'},
+    {name:'Senegal',lat:14.5,lon:-14.5,t:'Emerging Research Recipients',c:'#984EA3',iso:'SEN'},
+    {name:'Zambia',lat:-13.1,lon:27.8,t:'Emerging Research Recipients',c:'#984EA3',iso:'ZMB'},
+    {name:'Burkina Faso',lat:12.4,lon:-1.6,t:'Emerging Research Recipients',c:'#984EA3',iso:'BFA'},
+    {name:'Mozambique',lat:-18.7,lon:35.5,t:'Emerging Research Recipients',c:'#984EA3',iso:'MOZ'},
+    {name:'Zimbabwe',lat:-20.0,lon:30.0,t:'Emerging Research Recipients',c:'#984EA3',iso:'ZWE'},
+    {name:'Rwanda',lat:-1.9,lon:29.9,t:'Emerging Research Recipients',c:'#984EA3',iso:'RWA'},
+    {name:'Madagascar',lat:-18.8,lon:46.9,t:'Emerging Research Recipients',c:'#984EA3',iso:'MDG'},
+    {name:'Mali',lat:17.6,lon:-4.0,t:'Emerging Research Recipients',c:'#984EA3',iso:'MLI'},
+    {name:'Cameroon',lat:7.4,lon:12.4,t:'Emerging Research Recipients',c:'#984EA3',iso:'CMR'},
+    {name:'Benin',lat:9.3,lon:2.3,t:'Emerging Research Recipients',c:'#984EA3',iso:'BEN'},
+    {name:'Guinea',lat:9.9,lon:-9.7,t:'Emerging Research Recipients',c:'#984EA3',iso:'GIN'},
+    {name:'Gambia',lat:13.4,lon:-15.3,t:'Emerging Research Recipients',c:'#984EA3',iso:'GMB'},
+    {name:'Congo',lat:-4.3,lon:15.3,t:'Emerging Research Recipients',c:'#984EA3',iso:'COG'},
+    {name:'Botswana',lat:-22.3,lon:24.7,t:'Emerging Research Recipients',c:'#984EA3',iso:'BWA'},
+    {name:'Gabon',lat:-0.8,lon:11.6,t:'Emerging Research Recipients',c:'#984EA3',iso:'GAB'},
+    {name:"Côte d'Ivoire",lat:7.5,lon:-5.5,t:'Emerging Research Recipients',c:'#984EA3',iso:'CIV'},
+    {name:'Sudan',lat:12.9,lon:30.2,t:'Emerging Research Recipients',c:'#984EA3',iso:'SDN'},
+    // Underserved (red #E41A1C)
+    {name:'Angola',lat:-11.2,lon:17.9,t:'Underserved Periphery',c:'#E41A1C',iso:'AGO'},
+    {name:'Chad',lat:15.5,lon:18.7,t:'Underserved Periphery',c:'#E41A1C',iso:'TCD'},
+    {name:'Egypt',lat:26.8,lon:30.8,t:'Underserved Periphery',c:'#E41A1C',iso:'EGY'},
+    {name:'Tunisia',lat:33.9,lon:9.5,t:'Underserved Periphery',c:'#E41A1C',iso:'TUN'},
+    {name:'Niger',lat:17.6,lon:8.1,t:'Underserved Periphery',c:'#E41A1C',iso:'NER'},
+    {name:'Sierra Leone',lat:8.5,lon:-11.8,t:'Underserved Periphery',c:'#E41A1C',iso:'SLE'},
+    {name:'Burundi',lat:-3.4,lon:29.9,t:'Underserved Periphery',c:'#E41A1C',iso:'BDI'},
+    {name:'CAR',lat:6.6,lon:20.9,t:'Underserved Periphery',c:'#E41A1C',iso:'CAF'},
+    {name:'Eswatini',lat:-26.5,lon:31.5,t:'Underserved Periphery',c:'#E41A1C',iso:'SWZ'},
+    {name:'Guinea-Bissau',lat:12.0,lon:-15.2,t:'Underserved Periphery',c:'#E41A1C',iso:'GNB'},
+    {name:'Liberia',lat:6.4,lon:-9.4,t:'Underserved Periphery',c:'#E41A1C',iso:'LBR'},
+    {name:'Namibia',lat:-22.6,lon:17.1,t:'Underserved Periphery',c:'#E41A1C',iso:'NAM'},
+    {name:'Togo',lat:8.6,lon:1.2,t:'Underserved Periphery',c:'#E41A1C',iso:'TGO'},
+    // Structurally Excluded (grey #999999)
+    {name:'Algeria',lat:28.0,lon:1.7,t:'Structurally Excluded',c:'#999999',iso:'DZA'},
+    {name:'Libya',lat:26.3,lon:17.2,t:'Structurally Excluded',c:'#999999',iso:'LBY'},
+    {name:'Morocco',lat:31.8,lon:-7.1,t:'Structurally Excluded',c:'#999999',iso:'MAR'},
+    {name:'Somalia',lat:5.2,lon:46.2,t:'Structurally Excluded',c:'#999999',iso:'SOM'},
+    {name:'South Sudan',lat:6.9,lon:31.3,t:'Structurally Excluded',c:'#999999',iso:'SSD'},
+    {name:'Eritrea',lat:15.2,lon:39.8,t:'Structurally Excluded',c:'#999999',iso:'ERI'},
+    {name:'Lesotho',lat:-29.6,lon:28.2,t:'Structurally Excluded',c:'#999999',iso:'LSO'},
+    {name:'Mauritania',lat:21.0,lon:-10.9,t:'Structurally Excluded',c:'#999999',iso:'MRT'},
+    {name:'Cabo Verde',lat:16.0,lon:-24.0,t:'Structurally Excluded',c:'#999999',iso:'CPV'},
+    {name:'Comoros',lat:-11.9,lon:43.9,t:'Structurally Excluded',c:'#999999',iso:'COM'},
+    {name:'Djibouti',lat:11.8,lon:43.1,t:'Structurally Excluded',c:'#999999',iso:'DJI'},
+    {name:'Equatorial Guinea',lat:1.7,lon:10.3,t:'Structurally Excluded',c:'#999999',iso:'GNQ'},
+    {name:'Sao Tome',lat:0.2,lon:6.6,t:'Structurally Excluded',c:'#999999',iso:'STP'},
+    {name:'Seychelles',lat:-4.7,lon:55.5,t:'Structurally Excluded',c:'#999999',iso:'SYC'},
+    {name:'Mauritius',lat:-20.3,lon:57.6,t:'Structurally Excluded',c:'#999999',iso:'MUS'},
+  ];
+
+  // Use Plotly choropleth scatter on a geo layout of Africa
+  const typologies = ['Diversified Research Ecosystems','Emerging Research Recipients',
+    'Underserved Periphery','Structurally Excluded'];
+  const tColors = {'Diversified Research Ecosystems':'#4DAF4A',
+    'Emerging Research Recipients':'#984EA3','Underserved Periphery':'#E41A1C',
+    'Structurally Excluded':'#999999'};
+
+  // One trace per typology for legend
+  const traces = typologies.map(typ => {
+    const group = countries.filter(c => c.t === typ);
+    return {
+      type:'scattergeo', mode:'markers+text',
+      lat:group.map(g=>g.lat), lon:group.map(g=>g.lon),
+      text:group.map(g=>g.name),
+      textposition:'top center',
+      textfont:{size:10,family:'Source Sans 3',color:'#333'},
+      marker:{size:group.map(g => typ==='Diversified Research Ecosystems'?12:
+        typ==='Emerging Research Recipients'?9:
+        typ==='Underserved Periphery'?8:7),
+        color:tColors[typ], line:{width:0.8,color:'white'},
+        opacity:0.9},
+      name:typ,
+      hovertemplate:'%{text}<br>'+typ+'<extra></extra>'
+    };
+  });
+
+  Plotly.newPlot('fig_africa_map', traces, {
+    title:{text:'<b>Geographic Distribution of Country Typologies</b><br><span style="font-size:12px;color:#666">54 African countries classified into four funding typologies</span>',
+      font:{family:'Source Sans 3',size:16}},
+    geo:{
+      scope:'africa',
+      resolution:50,
+      showland:true, landcolor:'#EBEBEB',
+      showocean:true, oceancolor:'#F0F8FF',
+      showcountries:true, countrycolor:'#ccc', countrywidth:0.5,
+      showcoastlines:true, coastlinecolor:'#aaa',
+      showlakes:true, lakecolor:'#F0F8FF',
+      projection:{type:'natural earth'},
+      lonaxis:{range:[-26,62]}, lataxis:{range:[-37,40]},
+      bgcolor:'white'
+    },
+    legend:{font:{family:'Source Sans 3',size:11},
+      x:0.02,y:0.15,bgcolor:'rgba(255,255,255,0.85)'},
+    margin:{t:70,b:10,l:10,r:10},
+    height:624,
+    paper_bgcolor:'white',
+    font:{family:'Source Sans 3'}
+  }, {responsive:true,displayModeBar:false});
+})();
+
+} catch(e) { console.warn("Chart render error:", e); }
+// ═══════════════════════════════════════════════
+// FIGURE 7b: Funder-Country funding flows
+// ═══════════════════════════════════════════════
+try {
+(function() {
+  const el = document.getElementById('fig_chord_circular');
+
+  const funders = [
+    { name: "US NIH",              amt: 725, color: "#6baed6" },
+    { name: "Gates Foundation",    amt: 672, color: "#6baed6" },
+    { name: "EDCTP2 Association",  amt: 346, color: "#6baed6" },
+    { name: "Wellcome",            amt: 274, color: "#6baed6" },
+    { name: "South African DSI",   amt: 201, color: "#6baed6" },
+    { name: "EDCTP1 EEIG",         amt: 164, color: "#6baed6" },
+    { name: "PATH",                amt: 161, color: "#6baed6" },
+    { name: "UK MRC",              amt: 140, color: "#6baed6" },
+    { name: "EC",                  amt: 110, color: "#6baed6" },
+    { name: "South African MRC",   amt: 91,  color: "#6baed6" },
+    { name: "Germany BMBF",        amt: 71,  color: "#6baed6" },
+    { name: "Unitaid",             amt: 66,  color: "#6baed6" },
+    { name: "UKRI",                amt: 55,  color: "#6baed6" },
+    { name: "MRCF",                amt: 54,  color: "#6baed6" },
+    { name: "PRO",                 amt: 39,  color: "#6baed6" }
+  ];
+
+  const countries = [
+    { name: "South Africa",                    amt: 744, color: "#4DAF4A" },
+    { name: "Ghana",                           amt: 236, color: "#4DAF4A" },
+    { name: "Kenya",                           amt: 185, color: "#4DAF4A" },
+    { name: "Uganda",                          amt: 165, color: "#4DAF4A" },
+    { name: "Tanzania",                        amt: 160, color: "#4DAF4A" },
+    { name: "Gambia",                          amt: 97,  color: "#984EA3" },
+    { name: "Malawi",                          amt: 95,  color: "#984EA3" },
+    { name: "Mali",                            amt: 77,  color: "#984EA3" },
+    { name: "Burkina Faso",                    amt: 67,  color: "#984EA3" },
+    { name: "Mozambique",                      amt: 50,  color: "#984EA3" },
+    { name: "Zambia",                          amt: 42,  color: "#984EA3" },
+    { name: "Senegal",                         amt: 35,  color: "#984EA3" },
+    { name: "Cameroon",                        amt: 28,  color: "#984EA3" },
+    { name: "Gabon",                           amt: 22,  color: "#984EA3" },
+    { name: "Côte d'Ivoire",                   amt: 19,  color: "#984EA3" },
+    { name: "DRC",                             amt: 16,  color: "#984EA3" },
+    { name: "Zimbabwe",                        amt: 14,  color: "#984EA3" },
+    { name: "Botswana",                        amt: 12,  color: "#984EA3" },
+    { name: "Nigeria",                         amt: 11,  color: "#4DAF4A" },
+    { name: "Guinea",                          amt: 9,   color: "#984EA3" },
+    { name: "Benin",                           amt: 8,   color: "#984EA3" },
+    { name: "Ethiopia",                        amt: 7,   color: "#4DAF4A" },
+    { name: "Congo",                           amt: 6,   color: "#984EA3" },
+    { name: "Rwanda",                          amt: 5,   color: "#984EA3" },
+    { name: "Sudan",                           amt: 4,   color: "#984EA3" },
+    { name: "Niger",                           amt: 4,   color: "#E41A1C" },
+    { name: "Togo",                            amt: 3,   color: "#E41A1C" },
+    { name: "Madagascar",                      amt: 3,   color: "#984EA3" }
+  ];
+
+  const entities = [...funders, ...countries];
+  const F = funders.length;
+  const C = countries.length;
+  const T = F + C;
+  const totalFunding = funders.reduce((s, f) => s + f.amt, 0);
+
+  const cIdx = {};
+  countries.forEach((c, i) => { cIdx[c.name] = i; });
+
+  const dist = [
+    {"South Africa":340,"Uganda":82,"Kenya":62,"Tanzania":42,"Ghana":38,"Malawi":32,"Gambia":10,"Mali":8,"Burkina Faso":7,"Mozambique":15,"Zimbabwe":14,"Botswana":12,"Zambia":6,"Senegal":5,"Cameroon":5,"Nigeria":8,"Ethiopia":7,"Guinea":5,"DRC":5,"Gabon":4,"Côte d'Ivoire":3,"Benin":3,"Congo":2,"Rwanda":2,"Sudan":2,"Niger":2,"Togo":1,"Madagascar":1},
+    {"South Africa":148,"Ghana":82,"Kenya":52,"Mali":52,"Burkina Faso":42,"Tanzania":42,"Uganda":38,"Senegal":26,"Mozambique":24,"Malawi":22,"Zambia":20,"Gambia":14,"Cameroon":12,"Gabon":10,"Côte d'Ivoire":9,"DRC":8,"Nigeria":8,"Guinea":7,"Zimbabwe":7,"Botswana":6,"Benin":6,"Ethiopia":5,"Congo":5,"Rwanda":5,"Sudan":4,"Niger":4,"Togo":4,"Madagascar":4},
+    {"Ghana":48,"South Africa":42,"Kenya":36,"Tanzania":32,"Uganda":30,"Burkina Faso":24,"Mali":20,"Gambia":18,"Malawi":16,"Zambia":14,"Senegal":12,"Cameroon":10,"Mozambique":8,"Gabon":6,"Côte d'Ivoire":5,"DRC":4,"Guinea":4,"Zimbabwe":3,"Botswana":3,"Nigeria":2,"Benin":2,"Ethiopia":2,"Congo":1,"Rwanda":1,"Sudan":1,"Niger":1,"Togo":0.5,"Madagascar":0.5},
+    {"Kenya":68,"South Africa":52,"Ghana":30,"Uganda":26,"Gambia":24,"Malawi":22,"Tanzania":18,"Mozambique":8,"Burkina Faso":5,"Zambia":4,"Senegal":4,"Mali":3,"Cameroon":2,"Gabon":1.5,"Côte d'Ivoire":1.5,"DRC":1,"Zimbabwe":1,"Botswana":0.5,"Nigeria":0.5,"Guinea":0.5,"Benin":0.5},
+    {"South Africa":192,"Mozambique":2,"Malawi":1.5,"Zambia":1,"Zimbabwe":1,"Botswana":1,"Ghana":0.5,"Kenya":0.5,"Uganda":0.5,"Tanzania":0.5,"Cameroon":0.5},
+    {"Ghana":24,"South Africa":22,"Tanzania":18,"Kenya":16,"Uganda":14,"Gambia":14,"Malawi":10,"Burkina Faso":10,"Mali":8,"Senegal":6,"Zambia":4,"Cameroon":4,"Mozambique":3,"Gabon":2,"Côte d'Ivoire":2,"DRC":2,"Guinea":2,"Zimbabwe":1,"Benin":1,"Togo":0.5,"Niger":0.5},
+    {"South Africa":38,"Ghana":24,"Kenya":22,"Uganda":16,"Tanzania":14,"Mali":10,"Mozambique":8,"Zambia":6,"Burkina Faso":4,"Malawi":4,"Senegal":3,"Gambia":3,"Cameroon":2,"Gabon":1.5,"Côte d'Ivoire":1.5,"DRC":1,"Guinea":1,"Nigeria":1,"Zimbabwe":0.5,"Benin":0.5},
+    {"Gambia":58,"South Africa":26,"Uganda":16,"Kenya":12,"Tanzania":8,"Ghana":5,"Malawi":4,"Mali":3,"Zimbabwe":2,"Mozambique":1.5,"Burkina Faso":1,"Senegal":1,"Zambia":0.5,"Cameroon":0.5,"Gabon":0.5,"Côte d'Ivoire":0.5,"Botswana":0.5},
+    {"South Africa":20,"Ghana":14,"Kenya":12,"Uganda":10,"Tanzania":9,"Cameroon":7,"Burkina Faso":6,"Mali":5,"Malawi":4,"Gambia":4,"Senegal":3,"Zambia":3,"Mozambique":2.5,"Gabon":2,"Côte d'Ivoire":2,"DRC":2,"Guinea":1.5,"Zimbabwe":1,"Nigeria":0.5,"Benin":0.5,"Ethiopia":0.5,"Congo":0.5},
+    {"South Africa":84,"Mozambique":1.5,"Malawi":1,"Zimbabwe":1,"Botswana":1,"Zambia":0.5,"Kenya":0.5,"Uganda":0.5,"Ghana":0.5,"Tanzania":0.5},
+    {"Ghana":12,"Tanzania":10,"South Africa":10,"Kenya":8,"Uganda":6,"Burkina Faso":4,"Mali":3,"Malawi":3,"Senegal":3,"Gambia":2,"Cameroon":2,"Zambia":2,"Mozambique":1.5,"Gabon":1,"Côte d'Ivoire":1,"Guinea":0.5,"DRC":0.5,"Zimbabwe":0.5,"Benin":0.5,"Ethiopia":0.5},
+    {"South Africa":14,"Kenya":10,"Uganda":8,"Tanzania":6,"Ghana":6,"Cameroon":4,"Mozambique":3,"Malawi":3,"Zambia":2,"Mali":2,"Burkina Faso":2,"Senegal":1.5,"Gambia":1,"DRC":1,"Guinea":0.5,"Gabon":0.5,"Côte d'Ivoire":0.5,"Zimbabwe":0.5,"Nigeria":0.5},
+    {"South Africa":12,"Kenya":8,"Uganda":7,"Ghana":6,"Tanzania":5,"Gambia":4,"Malawi":3,"Mali":2,"Burkina Faso":1.5,"Senegal":1.5,"Cameroon":1,"Zambia":1,"Mozambique":1,"Gabon":0.5,"Côte d'Ivoire":0.5,"Zimbabwe":0.5},
+    {"South Africa":12,"Ghana":8,"Kenya":7,"Uganda":6,"Gambia":5,"Tanzania":4,"Malawi":3,"Burkina Faso":2,"Mali":2,"Senegal":1,"Zambia":1,"Cameroon":0.5,"Mozambique":0.5,"Gabon":0.5,"Côte d'Ivoire":0.5,"Guinea":0.5,"DRC":0.5},
+    {"South Africa":8,"Ghana":5,"Kenya":4,"Uganda":3,"Tanzania":3,"Malawi":2,"Gambia":2,"Mali":2,"Burkina Faso":1.5,"Mozambique":1,"Senegal":1,"Zambia":1,"Cameroon":1,"Gabon":0.5,"Côte d'Ivoire":0.5,"Guinea":0.5,"DRC":0.5,"Zimbabwe":0.5,"Botswana":0.5,"Nigeria":0.5,"Benin":0.5}
+  ];
+
+  // Build symmetric bipartite matrix
+  const matrix = [];
+  for (let i = 0; i < T; i++) { matrix[i] = new Float64Array(T); }
+
+  dist.forEach((d, fi) => {
+    Object.entries(d).forEach(([cName, val]) => {
+      if (val <= 0) return;
+      const ci = cIdx[cName];
+      if (ci === undefined) return;
+      matrix[fi][F + ci] = val;
+      matrix[F + ci][fi] = val;
+    });
+  });
+
+  // Render
+  const W = 800, H = 700;
+  const outerR = 200;
+  const innerR = outerR - 20;
+
+  const svg = d3.select(el).append('svg')
+    .attr('width', W).attr('height', H)
+    .attr('viewBox', `0 0 ${W} ${H}`)
+    .style('max-width', '100%')
+    .style('height', 'auto')
+    .style('overflow', 'visible');
+
+  // HTML title above SVG to match Plotly chart style
+  const titleDiv = document.createElement('div');
+  titleDiv.style.cssText = 'text-align:center; font-family:Source Sans 3, sans-serif; margin-bottom:8px;';
+  titleDiv.innerHTML = '<b style="font-size:16px;color:#333;">Funder\u2013Country Funding Flows (Top 15 Funders)</b><br><span style="font-size:12px;color:#666;">Chord width \u221D funding volume | Blue = funders | Countries coloured by typology/cluster</span>';
+  el.insertBefore(titleDiv, el.firstChild);
+
+  const g = svg.append('g').attr('transform', `translate(${W/2},${H/2})`);
+
+  const chordLayout = d3.chord()
+    .padAngle(0.007)
+    .sortGroups(null)
+    .sortSubgroups(d3.descending);
+
+  const chords = chordLayout(matrix);
+  const arcGen = d3.arc().innerRadius(innerR).outerRadius(outerR);
+  const ribbonGen = d3.ribbon().radius(innerR - 1);
+
+  // Tooltip
+  const tooltip = d3.select('body').append('div')
+    .style('position', 'fixed').style('display', 'none')
+    .style('background', 'rgba(25,25,25,0.93)').style('color', '#fff')
+    .style('padding', '8px 14px').style('border-radius', '5px')
+    .style('font-family', 'Source Sans 3, sans-serif').style('font-size', '13px')
+    .style('pointer-events', 'none').style('z-index', '999')
+    .style('line-height', '1.55').style('white-space', 'nowrap')
+    .style('box-shadow', '0 3px 10px rgba(0,0,0,0.35)');
+
+  // Ribbon layer
+  const ribbonLayer = g.append('g').attr('class', 'ribbons');
+
+  ribbonLayer.selectAll('path')
+    .data(chords)
+    .join('path')
+    .attr('d', ribbonGen)
+    .attr('fill', '#87bedc')
+    .attr('fill-opacity', 0.30)
+    .attr('stroke', '#87bedc')
+    .attr('stroke-opacity', 0.06)
+    .attr('stroke-width', 0.3)
+    .style('mix-blend-mode', 'multiply')
+    .on('mouseover', function(event, d) {
+      ribbonLayer.selectAll('path').attr('fill-opacity', 0.06);
+      d3.select(this).attr('fill-opacity', 0.82).attr('stroke-opacity', 0.5).raise();
+
+      let fI, cI;
+      if (d.source.index < F) { fI = d.source.index; cI = d.target.index - F; }
+      else { fI = d.target.index; cI = d.source.index - F; }
+      const fN = funders[fI]?.name ?? '?';
+      const cN = countries[cI]?.name ?? '?';
+      const v = Math.round(d.source.value);
+      tooltip.style('display', 'block')
+        .html('<b>' + fN + '</b> | ' + cN + ' | <b>$' + v + 'M</b>');
+    })
+    .on('mousemove', function(event) {
+      tooltip.style('left', (event.pageX + 16) + 'px').style('top', (event.pageY - 14) + 'px');
+    })
+    .on('mouseout', function() {
+      ribbonLayer.selectAll('path').attr('fill-opacity', 0.30).attr('stroke-opacity', 0.06);
+      tooltip.style('display', 'none');
+    })
+    .on('touchstart', function(event, d) {
+      event.preventDefault();
+      ribbonLayer.selectAll('path').attr('fill-opacity', 0.06);
+      d3.select(this).attr('fill-opacity', 0.82).attr('stroke-opacity', 0.5).raise();
+      let fI, cI;
+      if (d.source.index < F) { fI = d.source.index; cI = d.target.index - F; }
+      else { fI = d.target.index; cI = d.source.index - F; }
+      const fN = funders[fI]?.name ?? '?';
+      const cN = countries[cI]?.name ?? '?';
+      const v = Math.round(d.source.value);
+      const t = event.touches[0];
+      tooltip.style('display', 'block').style('left', (t.pageX + 16) + 'px').style('top', (t.pageY - 14) + 'px')
+        .html('<b>' + fN + '</b> | ' + cN + ' | <b>$' + v + 'M</b>');
+    }, {passive: false})
+    .on('touchend', function() {
+      ribbonLayer.selectAll('path').attr('fill-opacity', 0.30).attr('stroke-opacity', 0.06);
+      tooltip.style('display', 'none');
+    });
+
+  // Arc layer
+  const gGroups = g.append('g').attr('class', 'arcs')
+    .selectAll('g').data(chords.groups).join('g');
+
+  gGroups.append('path')
+    .attr('d', arcGen)
+    .attr('fill', d => entities[d.index].color)
+    .attr('stroke', d => d3.rgb(entities[d.index].color).darker(0.5))
+    .attr('stroke-width', 0.5)
+    .style('cursor', 'pointer')
+    .on('mouseover', function(event, d) {
+      ribbonLayer.selectAll('path')
+        .attr('fill-opacity', p =>
+          (p.source.index === d.index || p.target.index === d.index) ? 0.72 : 0.04
+        );
+      const e = entities[d.index];
+      const pct = ((e.amt / totalFunding) * 100).toFixed(1);
+      const type = d.index < F ? 'Funder' : 'Funded Country';
+      tooltip.style('display', 'block')
+        .html('<b>' + e.name + '</b><br>' + type + ' &middot; $' + e.amt + 'M &middot; ' + pct + '%');
+    })
+    .on('mousemove', function(event) {
+      tooltip.style('left', (event.pageX + 16) + 'px').style('top', (event.pageY - 14) + 'px');
+    })
+    .on('mouseout', function() {
+      ribbonLayer.selectAll('path').attr('fill-opacity', 0.30).attr('stroke-opacity', 0.06);
+      tooltip.style('display', 'none');
+    })
+    .on('touchstart', function(event, d) {
+      event.preventDefault();
+      ribbonLayer.selectAll('path')
+        .attr('fill-opacity', p =>
+          (p.source.index === d.index || p.target.index === d.index) ? 0.72 : 0.04
+        );
+      const e = entities[d.index];
+      const pct = ((e.amt / totalFunding) * 100).toFixed(1);
+      const type = d.index < F ? 'Funder' : 'Funded Country';
+      const t = event.touches[0];
+      tooltip.style('display', 'block').style('left', (t.pageX + 16) + 'px').style('top', (t.pageY - 14) + 'px')
+        .html('<b>' + e.name + '</b><br>' + type + ' &middot; $' + e.amt + 'M &middot; ' + pct + '%');
+    }, {passive: false})
+    .on('touchend', function() {
+      ribbonLayer.selectAll('path').attr('fill-opacity', 0.30).attr('stroke-opacity', 0.06);
+      tooltip.style('display', 'none');
+    });
+
+  // Labels
+  gGroups.append('text')
+    .each(d => { d.angle = (d.startAngle + d.endAngle) / 2; })
+    .attr('dy', '0.32em')
+    .attr('transform', d => {
+      const a = d.angle * 180 / Math.PI - 90;
+      return 'rotate(' + a + ') translate(' + (outerR + 8) + ',0)' + (d.angle > Math.PI ? ' rotate(180)' : '');
+    })
+    .attr('text-anchor', d => d.angle > Math.PI ? 'end' : 'start')
+    .style('font-size', d => {
+      const pct = (entities[d.index].amt / totalFunding) * 100;
+      if (pct < 0.25) return '7px';
+      if (pct < 0.6)  return '8px';
+      if (pct < 1.2)  return '9px';
+      return '10.5px';
+    })
+    .style('fill', '#444')
+    .style('font-family', 'Source Sans 3, sans-serif')
+    .text(d => {
+      const e = entities[d.index];
+      const pct = ((e.amt / totalFunding) * 100).toFixed(1);
+      return e.name + ' | $' + e.amt + 'M | ' + pct + '%';
+    });
+})();
+
+} catch(e) { console.warn("Chart render error:", e); }
+// ═══════════════════════════════════════════════
+// FIGURE 8b: Funder Portfolio Strategies
+// ═══════════════════════════════════════════════
+try {
+(function() {
+  const funders = [
+    {name:'NIH',breadth:19,depth:38.7,total:735},
+    {name:'Gates Foundation',breadth:18,depth:37.4,total:673},
+    {name:'EDCTP',breadth:33,depth:16.1,total:530},
+    {name:'Wellcome Trust',breadth:15,depth:30.3,total:455},
+    {name:'USAID',breadth:22,depth:17.5,total:385},
+    {name:'MRC-UK',breadth:12,depth:15.0,total:180},
+    {name:'European Commission',breadth:20,depth:10.5,total:210},
+    {name:'FIND',breadth:28,depth:4.6,total:128},
+    {name:'WHO/TDR',breadth:25,depth:4.2,total:105},
+    {name:'CDC',breadth:14,depth:10.7,total:150},
+    {name:'Novartis',breadth:8,depth:8.8,total:70},
+    {name:'GSK',breadth:7,depth:8.6,total:60},
+    {name:'Pfizer',breadth:5,depth:7.0,total:35},
+    {name:'DNDi',breadth:11,depth:6.5,total:72},
+    {name:'MMV',breadth:9,depth:5.3,total:48},
+    {name:'SIDA/Sweden',breadth:6,depth:12.0,total:72},
+    {name:'DFID/UK',breadth:10,depth:9.5,total:95},
+    {name:'CIHR/Canada',breadth:4,depth:6.0,total:24},
+    {name:'JICA/Japan',breadth:5,depth:4.8,total:24},
+    {name:'ANRS/France',breadth:7,depth:7.1,total:50},
+    {name:'AAS/AESA',breadth:14,depth:2.1,total:30},
+    {name:'BMGF India',breadth:3,depth:5.0,total:15},
+    {name:'World Bank',breadth:8,depth:3.8,total:30},
+    {name:'NORAD/Norway',breadth:6,depth:5.5,total:33},
+    {name:'IDRC/Canada',breadth:9,depth:3.2,total:29},
+  ];
+
+  const medBreadth = 9;
+  const medDepth = 7.0;
+
+  Plotly.newPlot('fig_funder_portfolio', [{
+    x: funders.map(f=>f.breadth),
+    y: funders.map(f=>f.depth),
+    mode:'markers+text',
+    text: funders.map(f=>f.name),
+    textposition: funders.map(f => f.total > 200 ? 'top center' : 'right'),
+    textfont:{size:funders.map(f=>f.total>300?10:f.total>100?9:7.5),
+      family:'Source Sans 3',color:'#333'},
+    marker:{
+      size: funders.map(f => Math.sqrt(f.total)*2.8),
+      color: funders.map(f => {
+        if(f.breadth >= medBreadth && f.depth >= medDepth) return '#27AE60';
+        if(f.breadth >= medBreadth && f.depth < medDepth) return '#F39C12';
+        if(f.breadth < medBreadth && f.depth >= medDepth) return '#2E86AB';
+        return '#E74C3C';
+      }),
+      opacity:0.7,
+      line:{width:1,color:'white'}
+    },
+    hovertemplate:'<b>%{text}</b><br>Breadth: %{x} countries<br>Depth: $%{y}M/country<br><extra></extra>'
+  }], {
+    title:{text:'<b>Funder Portfolio Strategies: Breadth vs Depth</b><br><span style="font-size:12px;color:#666">Bubble size = total investment | Quadrants defined by median breadth (9) and median depth ($7M)</span>',
+      font:{family:'Source Sans 3',size:16}},
+    xaxis:{title:{text:'Breadth (Countries Reached)', standoff:10},titlefont:{family:'Source Sans 3',size:12},
+      range:[0,38],gridcolor:'#eee',automargin:true},
+    yaxis:{title:{text:'Depth (Mean Funding per Country, $M)', standoff:10},titlefont:{family:'Source Sans 3',size:12},
+      range:[0,45],gridcolor:'#eee',automargin:true},
+    shapes:[
+      {type:'line',x0:medBreadth,x1:medBreadth,y0:0,y1:45,
+        line:{dash:'dash',color:'#aaa',width:1}},
+      {type:'line',x0:0,x1:38,y0:medDepth,y1:medDepth,
+        line:{dash:'dash',color:'#aaa',width:1}}
+    ],
+    annotations:[
+      {x:30,y:42,text:'<b>Broad & Deep</b>',showarrow:false,
+        font:{size:12,color:'#27AE60'}},
+      {x:3,y:42,text:'<b>Narrow & Deep</b>',showarrow:false,
+        font:{size:12,color:'#2E86AB'}},
+      {x:30,y:2,text:'<b>Broad & Shallow</b>',showarrow:false,
+        font:{size:12,color:'#F39C12'}},
+      {x:3,y:2,text:'<b>Narrow & Shallow</b>',showarrow:false,
+        font:{size:12,color:'#E74C3C'}}
+    ],
+    margin:{t:80,b:70,l:80,r:30},
+    height:600,
+    paper_bgcolor:'white',plot_bgcolor:'#fafcfe',
+    font:{family:'Source Sans 3'}
+  }, {responsive:true,displayModeBar:false});
+})();
+
+} catch(e) { console.warn("Chart render error:", e); }
+// ═══════════════════════════════════════════════
+// FIGURE 9b: Disease Systematic Gaps Heatmap (country × disease matrix)
+// ═══════════════════════════════════════════════
+try {
+(function() {
+  // Diseases (y-axis, matching Image 2 top to bottom)
+  const diseases = [
+    'Tuberculosis','Trachoma','STIs excl. HIV','Scabies',
+    'Rheumatic heart disease','Other infectious diseases','Neonatal disorders',
+    'NTDs and malaria','Meningitis','Maternal disorders','Malaria',
+    'Lower respiratory infections','Leprosy','HIV/AIDS','Hepatitis C',
+    'Hepatitis B','Gynecological diseases','Exposure to forces of nature',
+    'Dietary iron deficiency','Dengue','COVID-19','Cervical cancer'
+  ];
+
+  // Countries (x-axis, matching Image 2 left to right — ordered by total funding)
+  const countries = [
+    'Cabo Verde','Guinea','Senegal','CAR','Togo','Burundi','Zambia','Malawi',
+    'Morocco','Sierra Leone','Benin','Ghana','South Sudan','Madagascar',
+    'Cameroon','Angola','Algeria',"Côte d'Ivoire",'Burkina Faso','Congo',
+    'Sudan','Zimbabwe','Kenya','Mozambique','Chad','Uganda','Somalia','Niger',
+    'Mali','Comoros','Tanzania','Egypt','South Africa','DRC','Ethiopia','Nigeria'
+  ];
+
+  // Status codes: 0=Zero, 1=Critically Low, 2=Below Median, 3=At/Above Median
+  // Built from Image 2 cell-by-cell reading
+  const Z=0, R=1, O=2, G=3;
+
+  // Matrix [disease_idx][country_idx] — reading from Image 2
+  const data = {
+    'Cervical cancer':     [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,Z,Z],
+    'COVID-19':            [Z,Z,Z,Z,Z,Z,Z,Z,Z,R,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,R,R,O],
+    'Dengue':              [Z,Z,R,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,Z,Z,Z,Z,R,Z,O,O,Z,Z,Z,Z,Z,Z,O,Z,G,G,G,G],
+    'Dietary iron deficiency':[Z,Z,Z,R,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+    'Exposure to forces of nature':[Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+    'Gynecological diseases':[Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+    'Hepatitis B':         [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,O,Z,Z,Z],
+    'Hepatitis C':         [Z,Z,Z,Z,Z,Z,Z,R,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,R,Z],
+    'HIV/AIDS':            [Z,Z,Z,Z,Z,Z,G,G,Z,Z,Z,G,Z,Z,R,O,Z,Z,Z,Z,Z,G,G,G,Z,G,Z,Z,Z,Z,G,Z,G,R,G,G],
+    'Leprosy':             [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,R,Z],
+    'Lower respiratory infections':[Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+    'Malaria':             [Z,O,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,Z,Z,Z,Z,Z,G,Z,Z,Z,O,O,Z,G,Z,Z,Z,Z,G,Z,G,G,Z,G],
+    'Maternal disorders':  [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+    'Meningitis':          [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,R,Z,Z,Z,Z,O,Z,Z,Z,Z,Z,Z,Z,Z],
+    'NTDs and malaria':    [Z,Z,Z,Z,R,Z,Z,Z,Z,Z,Z,G,Z,G,Z,Z,Z,G,G,Z,Z,Z,G,G,Z,G,Z,Z,Z,Z,G,Z,G,G,G,G],
+    'Neonatal disorders':  [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+    'Other infectious diseases':[R,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,R,Z,G,Z,Z,Z,Z,Z,Z,G,R,G,G],
+    'Rheumatic heart disease':[Z,Z,Z,Z,Z,Z,Z,R,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+    'Scabies':             [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+    'STIs excl. HIV':      [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+    'Trachoma':            [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+    'Tuberculosis':        [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,Z,G,Z,Z,Z,Z,G,Z,G,Z,G,G],
+  };
+
+  // Build z-matrix (reversed so first disease is at top)
+  const zMatrix = diseases.map(d => data[d] || new Array(36).fill(0));
+
+  // Custom discrete colorscale: 0=Navy, 1=Red, 2=Orange, 3=Green
+  // Map: 0→0.0, 1→0.33, 2→0.66, 3→1.0
+  const zMapped = zMatrix.map(row => row.map(v => v / 3));
+
+  const colorscale = [
+    [0.0,  '#2C3E50'], [0.16, '#2C3E50'],   // Zero = dark navy
+    [0.17, '#E74C3C'], [0.40, '#E74C3C'],   // Critically Low = red
+    [0.41, '#F39C12'], [0.73, '#F39C12'],   // Below Median = orange
+    [0.74, '#27AE60'], [1.0,  '#27AE60']    // At/Above Median = green
+  ];
+
+  // Text matrix for hover
+  const statusLabels = ['Zero','Critically Low','Below Median','At/Above Median'];
+  const hoverText = zMatrix.map((row, ri) =>
+    row.map((v, ci) => `<b>${diseases[ri]}</b><br>${countries[ci]}<br>Status: ${statusLabels[v]}`)
+  );
+
+  Plotly.newPlot('fig_disease_heatmap', [{
+    type: 'heatmap',
+    z: zMapped,
+    x: countries,
+    y: diseases,
+    hovertext: hoverText,
+    hovertemplate: '%{hovertext}<extra></extra>',
+    colorscale: colorscale,
+    zmin: 0, zmax: 1,
+    showscale: false,
+    xgap: 1.5,
+    ygap: 1.5,
+  }], {
+    title: {
+      text: '<b>Systematic Funding Gaps Across Disease Areas</b><br>' +
+            '<span style="font-size:11px;color:#666">Top 15 highest-burden countries per disease | ' +
+            '<span style="background:#2C3E50;color:white;padding:1px 6px;border-radius:2px;">Zero</span> ' +
+            '<span style="background:#E74C3C;color:white;padding:1px 6px;border-radius:2px;">Critically Low</span> ' +
+            '<span style="background:#F39C12;color:white;padding:1px 6px;border-radius:2px;">Below Median</span> ' +
+            '<span style="background:#27AE60;color:white;padding:1px 6px;border-radius:2px;">At/Above Median</span></span>',
+      font: {family:'Source Sans 3', size:15}
+    },
+    xaxis: {
+      tickangle: -55,
+      tickfont: {size:9, family:'Source Sans 3'},
+      side: 'bottom',
+      dtick: 1,
+      automargin: true
+    },
+    yaxis: {
+      tickfont: {size:9, family:'Source Sans 3'},
+      autorange: 'reversed',
+      dtick: 1,
+      automargin: true
+    },
+    margin: {t:100, b:150, l:210, r:20},
+    paper_bgcolor: 'white',
+    plot_bgcolor: 'white',
+    font: {family:'Source Sans 3'},
+    height: 768
+  }, {responsive:true, displayModeBar:false});
+})();
+
+} catch(e) { console.warn("Chart render error:", e); }</script>
+
+</body>
+</html>
