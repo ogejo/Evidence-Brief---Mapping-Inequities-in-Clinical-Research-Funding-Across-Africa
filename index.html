@@ -1517,7 +1517,7 @@ disease_gap_summary <span class="op">&lt;-</span> equity_metrics <span class="op
     high <span class="op">=</span> <span class="st">"#67000D"</span>, midpoint <span class="op">=</span> <span class="nu">0.7</span>,
     labels <span class="op">=</span> percent) <span class="op">+</span>
   <span class="fn">coord_flip</span>() <span class="op">+</span>
-  <span class="fn">labs</span>(title <span class="op">=</span> <span class="st">"Systemic Funding Gaps by Disease Area"</span>,
+  <span class="fn">labs</span>(title <span class="op">=</span> <span class="st">"Systemic Funding Gaps Across Disease Area"</span>,
        fill <span class="op">=</span> <span class="st">"% Countries\nwith Zero Funding"</span>) <span class="op">+</span>
   <span class="fn">theme_minimal</span>(base_size <span class="op">=</span> <span class="nu">13</span>)</div>
   </div>
@@ -2684,123 +2684,122 @@ try {
 
 } catch(e) { console.warn("Chart render error:", e); }
 // ═══════════════════════════════════════════════
-// FIGURE 9b: Disease Systematic Gaps Heatmap (country × disease matrix)
-// ═══════════════════════════════════════════════
-try {
-(function() {
-  // Diseases (y-axis, matching Image 2 top to bottom)
-  const diseases = [
-    'Tuberculosis','Trachoma','STIs excl. HIV','Scabies',
-    'Rheumatic heart disease','Other infectious diseases','Neonatal disorders',
-    'NTDs and malaria','Meningitis','Maternal disorders','Malaria',
-    'Lower respiratory infections','Leprosy','HIV/AIDS','Hepatitis C',
-    'Hepatitis B','Gynecological diseases','Exposure to forces of nature',
-    'Dietary iron deficiency','Dengue','COVID-19','Cervical cancer'
-  ];
+  // FIGURE 9b: Disease Systematic Gaps Heatmap (country × disease matrix)
+  // ═══════════════════════════════════════════════
+  (function() {
+    const diseases = [
+      'Tuberculosis','Trachoma','STIs excl. HIV','Scabies',
+      'Rheumatic heart disease','Other infectious diseases','Neonatal disorders',
+      'NTDs and malaria','Meningitis','Maternal disorders','Malaria',
+      'Lower respiratory infections','Leprosy','HIV/AIDS','Hepatitis C',
+      'Hepatitis B','Gynecological diseases','Exposure to forces of nature',
+      'Dietary iron deficiency','Dengue','COVID-19','Cervical cancer'
+    ];
 
-  // Countries (x-axis, matching Image 2 left to right — ordered by total funding)
-  const countries = [
-    'Cabo Verde','Guinea','Senegal','CAR','Togo','Burundi','Zambia','Malawi',
-    'Morocco','Sierra Leone','Benin','Ghana','South Sudan','Madagascar',
-    'Cameroon','Angola','Algeria',"Côte d'Ivoire",'Burkina Faso','Congo',
-    'Sudan','Zimbabwe','Kenya','Mozambique','Chad','Uganda','Somalia','Niger',
-    'Mali','Comoros','Tanzania','Egypt','South Africa','DRC','Ethiopia','Nigeria'
-  ];
+    const countries = [
+      'Cabo Verde','Guinea','Senegal','CAR','Togo','Burundi','Zambia','Malawi',
+      'Morocco','Sierra Leone','Benin','Ghana','South Sudan','Madagascar',
+      'Cameroon','Angola','Algeria',"Côte d'Ivoire",'Burkina Faso','Congo',
+      'Sudan','Zimbabwe','Kenya','Mozambique','Chad','Uganda','Somalia','Niger',
+      'Mali','Comoros','Tanzania','Egypt','South Africa','DRC','Ethiopia','Nigeria'
+    ];
 
-  // Status codes: 0=Zero, 1=Critically Low, 2=Below Median, 3=At/Above Median
-  // Built from Image 2 cell-by-cell reading
-  const Z=0, R=1, O=2, G=3;
+    const Z=0, R=1, O=2, G=3;
 
-  // Matrix [disease_idx][country_idx] — reading from Image 2
-  const data = {
-    'Cervical cancer':     [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,Z,Z],
-    'COVID-19':            [Z,Z,Z,Z,Z,Z,Z,Z,Z,R,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,R,R,O],
-    'Dengue':              [Z,Z,R,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,Z,Z,Z,Z,R,Z,O,O,Z,Z,Z,Z,Z,Z,O,Z,G,G,G,G],
-    'Dietary iron deficiency':[Z,Z,Z,R,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
-    'Exposure to forces of nature':[Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
-    'Gynecological diseases':[Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
-    'Hepatitis B':         [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,O,Z,Z,Z],
-    'Hepatitis C':         [Z,Z,Z,Z,Z,Z,Z,R,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,R,Z],
-    'HIV/AIDS':            [Z,Z,Z,Z,Z,Z,G,G,Z,Z,Z,G,Z,Z,R,O,Z,Z,Z,Z,Z,G,G,G,Z,G,Z,Z,Z,Z,G,Z,G,R,G,G],
-    'Leprosy':             [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,R,Z],
-    'Lower respiratory infections':[Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
-    'Malaria':             [Z,O,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,Z,Z,Z,Z,Z,G,Z,Z,Z,O,O,Z,G,Z,Z,Z,Z,G,Z,G,G,Z,G],
-    'Maternal disorders':  [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
-    'Meningitis':          [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,R,Z,Z,Z,Z,O,Z,Z,Z,Z,Z,Z,Z,Z],
-    'NTDs and malaria':    [Z,Z,Z,Z,R,Z,Z,Z,Z,Z,Z,G,Z,G,Z,Z,Z,G,G,Z,Z,Z,G,G,Z,G,Z,Z,Z,Z,G,Z,G,G,G,G],
-    'Neonatal disorders':  [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
-    'Other infectious diseases':[R,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,R,Z,G,Z,Z,Z,Z,Z,Z,G,R,G,G],
-    'Rheumatic heart disease':[Z,Z,Z,Z,Z,Z,Z,R,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
-    'Scabies':             [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
-    'STIs excl. HIV':      [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
-    'Trachoma':            [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
-    'Tuberculosis':        [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,Z,G,Z,Z,Z,Z,G,Z,G,Z,G,G],
-  };
+    const data = {
+      'Cervical cancer':              [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,Z,Z],
+      'COVID-19':                     [Z,Z,Z,Z,Z,Z,Z,Z,Z,R,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,R,R,O],
+      'Dengue':                       [Z,Z,R,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,Z,Z,Z,Z,R,Z,O,O,Z,Z,Z,Z,Z,Z,O,Z,G,G,G,G],
+      'Dietary iron deficiency':      [Z,Z,Z,R,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+      'Exposure to forces of nature': [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+      'Gynecological diseases':       [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+      'Hepatitis B':                  [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,O,Z,Z,Z],
+      'Hepatitis C':                  [Z,Z,Z,Z,Z,Z,Z,R,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,R,Z],
+      'HIV/AIDS':                     [Z,Z,Z,Z,Z,Z,G,G,Z,Z,Z,G,Z,Z,R,O,Z,Z,Z,Z,Z,G,G,G,Z,G,Z,Z,Z,Z,G,Z,G,R,G,G],
+      'Leprosy':                      [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,R,Z],
+      'Lower respiratory infections': [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+      'Malaria':                      [Z,O,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,Z,Z,Z,Z,Z,G,Z,Z,Z,O,O,Z,G,Z,Z,Z,Z,G,Z,G,G,Z,G],
+      'Maternal disorders':           [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+      'Meningitis':                   [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,R,Z,Z,Z,Z,O,Z,Z,Z,Z,Z,Z,Z,Z],
+      'NTDs and malaria':             [Z,Z,Z,Z,R,Z,Z,Z,Z,Z,Z,G,Z,G,Z,Z,Z,G,G,Z,Z,Z,G,G,Z,G,Z,Z,Z,Z,G,Z,G,G,G,G],
+      'Neonatal disorders':           [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+      'Other infectious diseases':    [R,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,R,Z,G,Z,Z,Z,Z,Z,Z,G,R,G,G],
+      'Rheumatic heart disease':      [Z,Z,Z,Z,Z,Z,Z,R,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+      'Scabies':                      [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+      'STIs excl. HIV':               [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+      'Trachoma':                     [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z],
+      'Tuberculosis':                 [Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,Z,G,Z,Z,G,Z,Z,Z,Z,G,Z,G,Z,G,G],
+    };
 
-  // Build z-matrix (reversed so first disease is at top)
-  const zMatrix = diseases.map(d => data[d] || new Array(36).fill(0));
+    const zMatrix = diseases.map(d => data[d] || new Array(36).fill(0));
+    const zMapped = zMatrix.map(row => row.map(v => v / 3));
 
-  // Custom discrete colorscale: 0=Navy, 1=Red, 2=Orange, 3=Green
-  // Map: 0→0.0, 1→0.33, 2→0.66, 3→1.0
-  const zMapped = zMatrix.map(row => row.map(v => v / 3));
+    const colorscale = [
+      [0.0,  '#aaa'], [0.16, '#aaa'],
+      [0.17, '#E74C3C'], [0.40, '#E74C3C'],
+      [0.41, '#F39C12'], [0.73, '#F39C12'],
+      [0.74, '#27AE60'], [1.0,  '#27AE60']
+    ];
 
-  const colorscale = [
-    [0.0,  '#2C3E50'], [0.16, '#2C3E50'],   // Zero = dark navy
-    [0.17, '#E74C3C'], [0.40, '#E74C3C'],   // Critically Low = red
-    [0.41, '#F39C12'], [0.73, '#F39C12'],   // Below Median = orange
-    [0.74, '#27AE60'], [1.0,  '#27AE60']    // At/Above Median = green
-  ];
+    const statusLabels = ['Zero','Critically Low','Below Median','At/Above Median'];
+    const hoverText = zMatrix.map((row, ri) =>
+      row.map((v, ci) => `<b>${diseases[ri]}</b><br>${countries[ci]}<br>Status: ${statusLabels[v]}`)
+    );
 
-  // Text matrix for hover
-  const statusLabels = ['Zero','Critically Low','Below Median','At/Above Median'];
-  const hoverText = zMatrix.map((row, ri) =>
-    row.map((v, ci) => `<b>${diseases[ri]}</b><br>${countries[ci]}<br>Status: ${statusLabels[v]}`)
-  );
+    Plotly.newPlot('fig_disease_heatmap', [{
+      type: 'heatmap',
+      z: zMapped,
+      x: countries,
+      y: diseases,
+      hovertext: hoverText,
+      hovertemplate: '%{hovertext}<extra></extra>',
+      colorscale: colorscale,
+      zmin: 0, zmax: 1,
+      showscale: false,
+      xgap: 1.5,
+      ygap: 1.5,
+    }], {
+      title: {
+        text: '<b>Systematic Funding Gaps: Top 15 highest-burden countries per disease</b>',
+        x: 0.5,
+        xanchor: 'center',
+        font: { family: 'Source Sans 3', size: 15 }
+      },
 
-  Plotly.newPlot('fig_disease_heatmap', [{
-    type: 'heatmap',
-    z: zMapped,
-    x: countries,
-    y: diseases,
-    hovertext: hoverText,
-    hovertemplate: '%{hovertext}<extra></extra>',
-    colorscale: colorscale,
-    zmin: 0, zmax: 1,
-    showscale: false,
-    xgap: 1.5,
-    ygap: 1.5,
-  }], {
-    title: {
-      text: '<b>Systematic Funding Gaps Across Disease Areas</b><br>' +
-            '<span style="font-size:11px;color:#666">Top 15 highest-burden countries per disease | Dark navy = Zero funding; Red = Critically Low; Orange = Below Median; Green = At/Above Median ' +
-            '<span style="background:#2C3E50;color:white;padding:1px 6px;border-radius:2px;">Zero</span> ' +
-            '<span style="background:#E74C3C;color:white;padding:1px 6px;border-radius:2px;">Critically Low</span> ' +
-            '<span style="background:#F39C12;color:white;padding:1px 6px;border-radius:2px;">Below Median</span> ' +
-            '<span style="background:#27AE60;color:white;padding:1px 6px;border-radius:2px;">At/Above Median</span></span>',
-      font: {family:'Source Sans 3', size:15}
-    },
-    xaxis: {
-      tickangle: -55,
-      tickfont: {size:9, family:'Source Sans 3'},
-      side: 'bottom',
-      dtick: 1,
-      automargin: true
-    },
-    yaxis: {
-      tickfont: {size:9, family:'Source Sans 3'},
-      autorange: 'reversed',
-      dtick: 1,
-      automargin: true
-    },
-    margin: {t:100, b:150, l:210, r:20},
-    paper_bgcolor: 'white',
-    plot_bgcolor: 'white',
-    font: {family:'Source Sans 3'},
-    height: 768
-  }, {responsive:true, displayModeBar:false});
-})();
+      annotations: [{
+        text: 'Grey = Zero funding; Red = Critically Low; Orange = Below Median; Green = At/Above Median &nbsp;' +
+              '<span style="background:#aaa;color:white;padding:1px 6px;border-radius:2px;">Zero</span> ' +
+              '<span style="background:#E74C3C;color:white;padding:1px 6px;border-radius:2px;">Critically Low</span> ' +
+              '<span style="background:#F39C12;color:white;padding:1px 6px;border-radius:2px;">Below Median</span> ' +
+              '<span style="background:#27AE60;color:white;padding:1px 6px;border-radius:2px;">At/Above Median</span>',
+        font: { family: 'Source Sans 3', size: 11, color: '#666' },
+        showarrow: false,
+        xref: 'paper', yref: 'paper',
+        x: 0.5, y: 1.04,
+        xanchor: 'center', yanchor: 'bottom'
+      }],
 
-} catch(e) { console.warn("Chart render error:", e); }</script>
+      xaxis: {
+        tickangle: -55,
+        tickfont: { size: 9, family: 'Source Sans 3' },
+        side: 'bottom',
+        dtick: 1,
+        automargin: true
+      },
+      yaxis: {
+        tickfont: { size: 9, family: 'Source Sans 3' },
+        autorange: 'reversed',
+        dtick: 1,
+        automargin: true
+      },
+      margin: { t: 110, b: 150, l: 210, r: 20 },
+      paper_bgcolor: 'white',
+      plot_bgcolor: 'white',
+      font: { family: 'Source Sans 3' },
+      height: 768
+    }, { responsive: true, displayModeBar: false });
+  })();
+</script>
 
 </body>
 </html>
